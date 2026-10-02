@@ -1,28 +1,39 @@
 # GP Triage Demo
 
-A standalone static demo of the GP triage wireframe from Terra Symposium. It is built with Astro and React and can be run locally or hosted independently on Netlify.
+A browser-based workflow prototype for exploring GP triage, nurse review, and ambulance handover. It includes the main demo, ambulance and nurse views, and wireframes; it is for interface review and discussion, not operational care.
 
-Live demo: <https://gp-triage-demo.netlify.app>
+## Getting started
 
-## Run locally
+Requires Node.js 22.19+ and pnpm 10.30.3. From this repository root:
 
 ```sh
 pnpm install
 pnpm dev
 ```
 
-Open the local URL printed by Astro. Run `pnpm check` for type and Astro diagnostics, and `pnpm build` to create the static site in `dist/`.
+Open the local URL printed by Astro. The home page links to the workflow views.
 
-## Netlify
+### Commands
 
-The site is configured for Netlify in `netlify.toml`. Connect this repository to Netlify and use the included build command (`pnpm build`) and publish directory (`dist`). No runtime secrets or server functions are required.
+From the repository root, run `pnpm check` and `pnpm build`.
 
-## Demo behavior
+## Security and Limitations
 
-This is a wireframe demo, not a clinical service. The form does not send information to a server or dispatch service. On submission, the demo shows its existing confirmation alert and saves a limited mock patient record in the browser's `terra-patients` local storage key; the other entered fields remain in page memory.
+This prototype is not a clinical decision tool, patient record, or dispatch service. Use synthetic data only; do not enter real patient information or rely on it for care.
 
-Do not enter real patient information.
+## Structure
 
-## License
+`src/pages/` defines the home, ambulance, nurse, and wireframe routes. `src/components/` contains reusable workflow UI; Astro configuration is in `config/`.
 
-MIT. See [LICENSE](LICENSE).
+## References
+
+- [Astro configuration](config/astro.config.mjs)
+- [MIT license](LICENSE)
+
+## Contributing
+
+Keep changes within the prototype scope.
+
+## Credits and license
+
+The repository declares the [MIT license](LICENSE).
