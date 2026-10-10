@@ -9,7 +9,10 @@ export const SYMPTOMS = [
 	{ id: 'bleeding', gpLabel: 'Severe Bleeding', nurseLabel: 'Severe bleeding', weight: 50 },
 ];
 
-/** Returns the capped triage score for selected symptom IDs. */
+/** Calculates the capped triage score for the selected symptom identifiers.
+ * @param ids - Identifiers of symptoms selected during the assessment.
+ * @returns The combined symptom weight plus baseline, capped at 99.
+ */
 export function symptomScore(ids: string[]): number {
-	return Math.min(99, ids.reduce((total, id) => total + (SYMPTOMS.find(symptom => symptom.id === id)?.weight ?? 0), 10));
+	return Math.min(99, ids.reduce((scoreTotal, id) => scoreTotal + (SYMPTOMS.find(symptom => symptom.id === id)?.weight ?? 0), 10));
 }

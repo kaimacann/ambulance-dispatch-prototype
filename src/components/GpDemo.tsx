@@ -61,14 +61,14 @@ export default function GpDemo(): React.JSX.Element | null {
 
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col'>
-			<Surface variant='secondary-tonal' className='mb-6 flex items-start gap-3 rounded-lg border p-4'>
+			<Surface variant='secondary-tonal' className='mb-6 flex items-start gap-3 rounded-lg p-4'>
 				<svg className='mt-0.5 size-5 shrink-0' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' aria-hidden='true'>
 					<circle cx='12' cy='12' r='9' />
 					<path d='M12 11v5m0-8h.01' strokeLinecap='round' />
 				</svg>
 				<p className='text-sm font-medium'>For patients in critical condition, transfer the patient information to emergency services for prompt service.</p>
 			</Surface>
-			<Surface variant='primary-tonal' className='flex flex-col overflow-auto rounded-xl border shadow-sm'>
+			<Surface variant='primary-tonal' className='flex flex-col overflow-auto rounded-xl shadow-sm'>
 				<div className='flex flex-col space-y-1.5 p-6 pb-0 pt-4'>
 					<h1 className='m-0 text-base font-semibold leading-none tracking-tight'>Patient Info</h1>
 				</div>
@@ -81,27 +81,19 @@ export default function GpDemo(): React.JSX.Element | null {
 								['Phone Number', 'phone', 'tel', '(555) 123-4567'],
 								['Location', 'location', 'text', '123 Main St'],
 							] as const
-						).map(([label, key, type, placeholder]) => (
-							<div key={key} className='grid gap-1'>
-								<label className='text-sm font-medium leading-none text-primary-11' htmlFor={`field-${key}`}>
-									{label}
+						).map(([description, fieldKey, fieldType, fieldPlaceholder]) => (
+							<div key={fieldKey} className='grid gap-1'>
+								<label className='text-sm font-medium leading-none text-primary-11' htmlFor={`field-${fieldKey}`}>
+									{description}
 								</label>
-								<Input
-									id={`field-${key}`}
-									variant='primary'
-									size='md'
-									type={type}
-									placeholder={placeholder}
-									value={formData[key]}
-									onChange={event => handleFormChange(key, event.currentTarget.value)}
-								/>
+								<Input id={`field-${fieldKey}`} type={fieldType} placeholder={fieldPlaceholder} value={formData[fieldKey]} onChange={event => handleFormChange(fieldKey, event.currentTarget.value)} />
 							</div>
 						))}
 						<div className='grid gap-1'>
 							<label className='text-sm font-medium leading-none text-primary-11' htmlFor='field-gender'>
 								Gender
 							</label>
-							<Select id='field-gender' aria-label='Select...' variant='primary' size='md' value={formData.gender} onChange={event => handleFormChange('gender', event.currentTarget.value)}>
+							<Select id='field-gender' value={formData.gender} onChange={event => handleFormChange('gender', event.currentTarget.value)}>
 								<option value=''>Select...</option>
 								<option value='Male'>Male</option>
 								<option value='Female'>Female</option>
@@ -113,7 +105,7 @@ export default function GpDemo(): React.JSX.Element | null {
 							<label className='text-sm font-medium leading-none text-primary-11' htmlFor='field-age'>
 								Age
 							</label>
-							<Input id='field-age' type='number' placeholder='52' variant='primary' size='md' value={formData.age} onChange={event => handleFormChange('age', event.currentTarget.value)} />
+							<Input id='field-age' type='number' placeholder='52' value={formData.age} onChange={event => handleFormChange('age', event.currentTarget.value)} />
 						</div>
 					</div>
 
@@ -123,14 +115,7 @@ export default function GpDemo(): React.JSX.Element | null {
 							{SYMPTOMS.map(symptom => {
 								const selected = selSymptoms.includes(symptom.id);
 								return (
-									<ToggleButton
-										key={symptom.id}
-										aria-pressed={selected}
-										onClick={() => toggleSymptom(symptom.id)}
-										variant='primary-tonal'
-										size='sm'
-										className='w-full flex-col items-start space-y-1'
-									>
+									<ToggleButton key={symptom.id} aria-pressed={selected} onClick={() => toggleSymptom(symptom.id)} variant='primary-tonal' size='sm' className='w-full flex-col items-start space-y-1'>
 										<span className='font-medium'>{symptom.gpLabel}</span>
 									</ToggleButton>
 								);

@@ -1,15 +1,24 @@
 import React from 'react';
 
+/** Palette names supported by shared interface controls. */
 export type UiColor = 'primary' | 'secondary' | 'gray' | 'destructive';
+/** Visual treatments available to shared interface controls. */
 export type UiType = 'default' | 'outline' | 'ghost' | 'tonal' | 'saturated' | 'link' | 'underline';
+/** Preset control dimensions from extra small through extra large. */
 export type UiSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
+/** Variants available to action buttons. */
 export type ActionVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'saturated'>}`;
+/** Variants available to form and toggle controls. */
 export type ControlVariant = UiColor | `${UiColor}-${Extract<UiType, 'outline' | 'ghost' | 'tonal'>}`;
+/** Variants available to semantic surface containers. */
 export type SurfaceVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'link' | 'underline'>}`;
 
+/** Treatments usable by action buttons. */
 type ActionTreatment = Exclude<UiType, 'saturated'>;
+/** Treatments usable by form and toggle controls. */
 type ControlTreatment = Extract<UiType, 'default' | 'outline' | 'ghost' | 'tonal'>;
+/** Treatments usable by surface containers. */
 type SurfaceTreatment = Exclude<UiType, 'link' | 'underline'>;
 
 export const ACTION_VARIANTS = {
@@ -147,35 +156,59 @@ const SELECTED_TOGGLE: Record<UiColor, string> = {
 	destructive: 'border-rose-600 bg-rose-50 ring-1 ring-rose-600',
 };
 
+/** Joins enabled class names into one CSS class string.
+ * @param values - Class names and conditional values to combine.
+ * @returns The non-empty class names separated by spaces.
+ */
 function classes(...values: Array<string | false | undefined>): string {
 	return values.filter(Boolean).join(' ');
 }
 
+/** HTML attributes and variant options accepted by the Surface component. */
 type SurfaceProps = React.HTMLAttributes<HTMLElement> & {
 	as?: 'div' | 'section' | 'article' | 'header' | 'span';
 	variant?: SurfaceVariant;
 };
 
-/** Renders a semantic container using the shared surface variants. */
+/** Renders a semantic container using the shared surface variants.
+ * @param props - Element attributes, selected surface variant, and optional class names.
+ * @returns The semantic container element with its variant styles applied.
+ */
 export function Surface({ as: Element = 'div', variant = 'primary', className, ...props }: SurfaceProps): React.JSX.Element {
 	return <Element className={classes(surfaceClass(variant), className)} {...props} />;
 }
 
+/** Resolves the class names for an action button variant.
+ * @param variant - Palette and treatment combination to resolve.
+ * @returns CSS classes assigned to the requested action variant.
+ */
 export function actionClass(variant: ActionVariant): string {
 	const [color, treatment = 'default'] = variant.split('-') as [UiColor, ActionTreatment?];
 	return ACTION_VARIANTS[color][treatment];
 }
 
+/** Resolves the class names for a surface variant.
+ * @param variant - Palette and treatment combination to resolve.
+ * @returns CSS classes assigned to the requested surface variant.
+ */
 function surfaceClass(variant: SurfaceVariant): string {
 	const [color, treatment = 'default'] = variant.split('-') as [UiColor, SurfaceTreatment?];
 	return SURFACE_VARIANTS[color][treatment];
 }
 
+/** Resolves the class names for a form control variant.
+ * @param variant - Palette and treatment combination to resolve.
+ * @returns CSS classes assigned to the requested form control variant.
+ */
 function controlClass(variant: ControlVariant): string {
 	const [color, treatment = 'default'] = variant.split('-') as [UiColor, ControlTreatment?];
 	return CONTROL_VARIANTS[color][treatment];
 }
 
+/** Resolves the selected-state class names for a toggle palette.
+ * @param variant - Control palette and treatment for the toggle.
+ * @returns CSS classes applied while the toggle is selected.
+ */
 function selectedToggleClass(variant: ControlVariant): string {
 	const [color] = variant.split('-') as [UiColor];
 	return SELECTED_TOGGLE[color];
@@ -206,8 +239,11 @@ export const ToggleButton = React.forwardRef<
 });
 ToggleButton.displayName = 'ToggleButton';
 
+/** Input attributes plus shared control variant and size options. */
 type InputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & { variant?: ControlVariant; size?: UiSize };
+/** Select attributes plus shared control variant and size options. */
 type SelectProps = Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> & { variant?: ControlVariant; size?: UiSize };
+/** Textarea attributes plus shared control variant and size options. */
 type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & { variant?: ControlVariant; size?: UiSize };
 
 /** Renders a styled text input for either demo form. */
