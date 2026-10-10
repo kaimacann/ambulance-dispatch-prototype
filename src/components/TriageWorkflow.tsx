@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
-import { Button, Input, Select, Textarea } from './ui/controls';
+import { Button, Input, Select, Textarea, ToggleButton } from './ui/controls';
 
 /** Selects the nurse intake view or ambulance dispatch queue. */
 type Props = { mode: 'nurse' | 'ambulance' };
@@ -125,12 +125,12 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 					) : (
 						<div className='flex flex-col gap-2' role='list' aria-label='Patients awaiting dispatch'>
 							{patients.map(patient => (
-								<Button
+								<ToggleButton
 									key={patient.id}
 									role='listitem'
 									aria-pressed={selectedId === patient.id}
 									onClick={() => setSelectedId(patient.id)}
-									variant='selectable'
+									variant='primary-outline'
 									size='lg'
 									className='flex items-center justify-between'
 								>
@@ -143,7 +143,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 									<span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${patient.status === 'pending' ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900'}`}>
 										{patient.status === 'pending' ? 'Pending' : 'Dispatched'}
 									</span>
-								</Button>
+								</ToggleButton>
 							))}
 						</div>
 					)}
@@ -216,12 +216,19 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 								).map(field => (
 									<label key={field.key} className='text-sm font-medium'>
 										{field.label}
-										<Input variant='intake' type={field.type} value={intake[field.key]} onChange={event => setIntake(current => ({ ...current, [field.key]: event.currentTarget.value }))} />
+										<Input
+											variant='primary'
+											size='md'
+											className='mt-1'
+											type={field.type}
+											value={intake[field.key]}
+											onChange={event => setIntake(current => ({ ...current, [field.key]: event.currentTarget.value }))}
+										/>
 									</label>
 								))}
 								<label className='text-sm font-medium'>
 									Gender
-									<Select variant='intake' value={intake.gender} onChange={event => setIntake(current => ({ ...current, gender: event.currentTarget.value }))}>
+									<Select variant='primary' size='md' className='mt-1' value={intake.gender} onChange={event => setIntake(current => ({ ...current, gender: event.currentTarget.value }))}>
 										<option value=''>Select…</option>
 										<option>Female</option>
 										<option>Male</option>
@@ -238,15 +245,15 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 									{SYMPTOMS.map(item => {
 										const checked = selectedSymptoms.includes(item.id);
 										return (
-											<Button
+											<ToggleButton
 												key={item.id}
 												aria-pressed={checked}
 												onClick={() => setSelectedSymptoms(current => (checked ? current.filter(id => id !== item.id) : [...current, item.id]))}
-												variant='selectable-white'
-											size='sm'
+												variant='primary-outline'
+												size='sm'
 											>
 												{item.label}
-											</Button>
+											</ToggleButton>
 										);
 									})}
 								</div>
@@ -255,7 +262,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 								<span className='text-sm text-primary-9'>
 									Current triage score: <strong className='text-primary-12'>{score} / 100</strong>
 								</span>
-								<Button size='md' onClick={() => setStep('result')}>
+								<Button variant='primary' size='md' onClick={() => setStep('result')}>
 									Review assessment →
 								</Button>
 							</div>
@@ -287,7 +294,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 							</section>
 							<section className={`${panelClass} border-dashed`}>
 								<h2 className='mb-2 mt-0 text-lg font-semibold'>Handover notes</h2>
-								<Textarea aria-label='Handover notes' placeholder='Record notes for the receiving team' />
+								<Textarea variant='primary' size='md' aria-label='Handover notes' placeholder='Record notes for the receiving team' />
 							</section>
 						</aside>
 					</div>
@@ -334,10 +341,10 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 						</div>
 					</div>
 					<div className='mt-6 flex flex-col-reverse justify-between gap-3 sm:flex-row'>
-						<Button variant='outline' size='sm' onClick={() => setStep('intake')}>
+						<Button variant='primary-outline' size='sm' onClick={() => setStep('intake')}>
 							← Back to assessment
 						</Button>
-						<Button size='sm' onClick={finish}>
+						<Button variant='primary' size='sm' onClick={finish}>
 							Add to dispatch queue
 						</Button>
 					</div>

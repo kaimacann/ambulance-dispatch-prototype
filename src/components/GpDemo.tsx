@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
-import { Button, Input, Select } from './ui/controls';
+import { Button, Input, Select, ToggleButton } from './ui/controls';
 
 /** Patient contact and demographic fields collected for a referral. */
 type PatientFormData = {
@@ -109,42 +109,24 @@ export default function GpDemo(): React.JSX.Element | null {
 					<div className='grid grid-cols-2 gap-2'>
 						{(
 							[
-								{
-									label: 'First Name',
-									key: 'firstName',
-									type: 'text',
-									placeholder: 'Jane',
-								},
-								{
-									label: 'Last Name',
-									key: 'lastName',
-									type: 'text',
-									placeholder: 'Doe',
-								},
-								{
-									label: 'Phone Number',
-									key: 'phone',
-									type: 'tel',
-									placeholder: '(555) 123-4567',
-								},
-								{
-									label: 'Location',
-									key: 'location',
-									type: 'text',
-									placeholder: '123 Main St',
-								},
+								['First Name', 'firstName', 'text', 'Jane'],
+								['Last Name', 'lastName', 'text', 'Doe'],
+								['Phone Number', 'phone', 'tel', '(555) 123-4567'],
+								['Location', 'location', 'text', '123 Main St'],
 							] as const
-						).map(field => (
-							<div key={field.key} className='grid gap-1'>
-								<label className='text-sm font-medium leading-none text-primary-11' htmlFor={`field-${field.key}`}>
-									{field.label}
+						).map(([label, key, type, placeholder]) => (
+							<div key={key} className='grid gap-1'>
+								<label className='text-sm font-medium leading-none text-primary-11' htmlFor={`field-${key}`}>
+									{label}
 								</label>
 								<Input
-									id={`field-${field.key}`}
-									type={field.type}
-									placeholder={field.placeholder}
-									value={formData[field.key]}
-									onChange={event => handleFormChange(field.key, event.currentTarget.value)}
+									id={`field-${key}`}
+									variant='primary'
+									size='md'
+									type={type}
+									placeholder={placeholder}
+									value={formData[key]}
+									onChange={event => handleFormChange(key, event.currentTarget.value)}
 								/>
 							</div>
 						))}
@@ -152,7 +134,7 @@ export default function GpDemo(): React.JSX.Element | null {
 							<label className='text-sm font-medium leading-none text-primary-11' htmlFor='field-gender'>
 								Gender
 							</label>
-							<Select id='field-gender' aria-label='Select...' value={formData.gender} onChange={event => handleFormChange('gender', event.currentTarget.value)}>
+							<Select id='field-gender' aria-label='Select...' variant='primary' size='md' value={formData.gender} onChange={event => handleFormChange('gender', event.currentTarget.value)}>
 								<option value=''>Select...</option>
 								<option value='Male'>Male</option>
 								<option value='Female'>Female</option>
@@ -164,7 +146,7 @@ export default function GpDemo(): React.JSX.Element | null {
 							<label className='text-sm font-medium leading-none text-primary-11' htmlFor='field-age'>
 								Age
 							</label>
-							<Input id='field-age' type='number' placeholder='52' value={formData.age} onChange={event => handleFormChange('age', event.currentTarget.value)} />
+							<Input id='field-age' type='number' placeholder='52' variant='primary' size='md' value={formData.age} onChange={event => handleFormChange('age', event.currentTarget.value)} />
 						</div>
 					</div>
 
@@ -174,16 +156,24 @@ export default function GpDemo(): React.JSX.Element | null {
 							{SYMPTOMS.map(symptom => {
 								const selected = selSymptoms.includes(symptom.id);
 								return (
-									<Button key={symptom.id} aria-pressed={selected} data-state={selected ? 'checked' : 'unchecked'} onClick={() => toggleSymptom(symptom.id)} variant='symptom'>
+									<ToggleButton
+										key={symptom.id}
+										aria-pressed={selected}
+										data-state={selected ? 'checked' : 'unchecked'}
+										onClick={() => toggleSymptom(symptom.id)}
+										variant='primary-tonal'
+										size='sm'
+										className='w-full flex-col items-start space-y-1'
+									>
 										<span className='font-medium'>{symptom.label}</span>
-									</Button>
+									</ToggleButton>
 								);
 							})}
 						</div>
 					</div>
 
 					<div className='pt-2'>
-						<Button onClick={handleGpReferral} variant='destructive'>
+						<Button onClick={handleGpReferral} variant='destructive' size='lg' className='w-full'>
 							Refer to Ambulance Dispatch
 						</Button>
 					</div>
