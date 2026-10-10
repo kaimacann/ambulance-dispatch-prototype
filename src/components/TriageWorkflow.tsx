@@ -131,7 +131,8 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 									aria-pressed={selectedId === patient.id}
 									onClick={() => setSelectedId(patient.id)}
 									variant='selectable'
-									className='flex items-center justify-between p-4'
+									size='lg'
+									className='flex items-center justify-between'
 								>
 									<span>
 										<span className='block font-semibold'>
@@ -242,7 +243,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 												aria-pressed={checked}
 												onClick={() => setSelectedSymptoms(current => (checked ? current.filter(id => id !== item.id) : [...current, item.id]))}
 												variant='selectable-white'
-												className='min-h-12 px-3 py-2 text-sm font-medium'
+											size='sm'
 											>
 												{item.label}
 											</Button>
