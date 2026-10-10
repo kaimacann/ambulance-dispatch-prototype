@@ -112,7 +112,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 									onClick={() => setSelectedId(patient.id)}
 									variant='primary-outline'
 									size='lg'
-									className='flex items-center justify-between'
+									className='justify-between'
 								>
 									<span>
 										<span className='block font-semibold'>
