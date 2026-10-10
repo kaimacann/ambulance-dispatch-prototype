@@ -1,5 +1,4 @@
-/** One simulated patient assessment as stored in the dispatch queue. */
-/** Minimal local record used to show the emergency dispatch referral result. */
+/** Minimal simulated patient assessment stored in the dispatch queue and shown as a referral result. */
 export type Patient = {
 	id: string;
 	firstName: string;

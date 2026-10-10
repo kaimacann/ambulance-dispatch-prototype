@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
-import { SYMPTOMS } from '../lib/symptoms';
+import { SYMPTOMS, symptomScore } from '../lib/symptoms';
 import { Button, Input, Select, Textarea, ToggleButton } from './ui/controls';
 
 /** Selects the nurse intake view or ambulance dispatch queue. */
@@ -74,14 +74,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 	const [step, setStep] = useState<'intake' | 'result'>('intake');
 	const [patients, setPatients] = useState<Patient[]>([]);
 	const [selectedId, setSelectedId] = useState('');
-	const score = useMemo(
-		() =>
-			Math.min(
-				99,
-				selectedSymptoms.reduce((scoreTotal, id) => scoreTotal + (SYMPTOMS.find(item => item.id === id)?.weight ?? 0), 10),
-			),
-		[selectedSymptoms],
-	);
+	const score = useMemo(() => symptomScore(selectedSymptoms), [selectedSymptoms]);
 
 	useEffect(() => {
 		setMounted(true);

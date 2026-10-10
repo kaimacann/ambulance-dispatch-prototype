@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
-import { SYMPTOMS } from '../lib/symptoms';
+import { SYMPTOMS, symptomScore } from '../lib/symptoms';
 import { Button, Input, Select, ToggleButton } from './ui/controls';
 
 /** Patient contact and demographic fields collected for a referral. */
@@ -48,13 +48,7 @@ export default function GpDemo(): React.JSX.Element | null {
 		setSelSymptoms(previous => (previous.includes(id) ? previous.filter(symptom => symptom !== id) : [...previous, id]));
 	};
 
-	const calcdScore = Math.min(
-		99,
-		selSymptoms.reduce((score, id) => {
-			const symptom = SYMPTOMS.find(item => item.id === id);
-			return score + (symptom ? symptom.weight : 0);
-		}, 10),
-	);
+	const calcdScore = symptomScore(selSymptoms);
 
 	const savePatient = () => {
 		const patient: Patient = {
