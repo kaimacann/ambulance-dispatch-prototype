@@ -1,27 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-
-/** One simulated patient assessment as stored in the dispatch queue. */
-type Patient = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	score: number;
-	eta: string;
-	status: 'pending' | 'dispatched';
-	timeSeconds: number;
-};
+import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
 
 /** Selects the nurse intake view or ambulance dispatch queue. */
 type Props = { mode: 'nurse' | 'ambulance' };
 /** Caller and patient details collected during the simulated nurse intake. */
 type Intake = { firstName: string; lastName: string; phone: string; location: string; gender: string; age: string };
 
-const STORAGE_KEY = 'terra-patients';
-const SEED: Patient[] = [
-	{ id: 'patient-1', firstName: 'Sarah', lastName: 'Connor', score: 85, eta: '6-8', status: 'pending', timeSeconds: 45 },
-	{ id: 'patient-2', firstName: 'Kyle', lastName: 'Reese', score: 42, eta: 'N/A', status: 'pending', timeSeconds: 112 },
-	{ id: 'patient-3', firstName: 'Miles', lastName: 'Dyson', score: 92, eta: '3-5', status: 'dispatched', timeSeconds: 15 },
-];
 const SYMPTOMS = [
 	{ id: 'chest_pain', label: 'Chest pain', weight: 55 },
 	{ id: 'breathing', label: 'Difficulty breathing', weight: 45 },
@@ -43,10 +27,10 @@ const panelClass = 'rounded-xl border border-primary-5 bg-white p-5 shadow-sm';
  */
 function readPatients(): Patient[] {
 	try {
-		const stored = window.localStorage.getItem(STORAGE_KEY);
-		return stored ? (JSON.parse(stored) as Patient[]) : SEED;
+		const stored = window.localStorage.getItem(PATIENTS_STORAGE_KEY);
+		return stored ? (JSON.parse(stored) as Patient[]) : INITIAL_PATIENTS;
 	} catch {
-		return SEED;
+		return INITIAL_PATIENTS;
 	}
 }
 
@@ -58,7 +42,7 @@ function readPatients(): Patient[] {
  */
 function writePatients(patients: Patient[]): void {
 	try {
-		window.localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+		window.localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify(patients));
 	} catch {
 		// Keep the demo usable when browser storage is unavailable.
 	}
