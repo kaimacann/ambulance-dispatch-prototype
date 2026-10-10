@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
+import { Button, Input, Select } from './ui/controls';
 
 /** Patient contact and demographic fields collected for a referral. */
 type PatientFormData = {
@@ -21,9 +22,6 @@ const SYMPTOMS = [
 	{ id: 'fever', label: 'High Fever', weight: 20 },
 	{ id: 'bleeding', label: 'Severe Bleeding', weight: 50 },
 ];
-
-const inputClassName =
-	'flex h-10 w-full rounded-md border border-primary-6 bg-white px-3 py-2 text-base text-primary-12 placeholder:text-primary-11/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-11 disabled:cursor-not-allowed disabled:opacity-50';
 
 /** Renders the interactive GP triage form and its local referral timer demo.
  * @returns The triage interface after client hydration, or `null` during server rendering.
@@ -80,7 +78,7 @@ export default function GpDemo(): React.JSX.Element | null {
 		};
 		try {
 			const existing = window.localStorage.getItem(PATIENTS_STORAGE_KEY);
-			const patients = existing ? (JSON.parse(existing) as PatientRec[]) : INITIAL_PATIENTS;
+			const patients = existing ? (JSON.parse(existing) as Patient[]) : INITIAL_PATIENTS;
 			window.localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify([...patients, patient]));
 		} catch {
 			// Keep the visible demo confirmation available if browser storage is disabled.
@@ -141,11 +139,10 @@ export default function GpDemo(): React.JSX.Element | null {
 								<label className='text-sm font-medium leading-none text-primary-11' htmlFor={`field-${field.key}`}>
 									{field.label}
 								</label>
-								<input
+								<Input
 									id={`field-${field.key}`}
 									type={field.type}
 									placeholder={field.placeholder}
-									className={inputClassName}
 									value={formData[field.key]}
 									onChange={event => handleFormChange(field.key, event.currentTarget.value)}
 								/>
@@ -155,19 +152,19 @@ export default function GpDemo(): React.JSX.Element | null {
 							<label className='text-sm font-medium leading-none text-primary-11' htmlFor='field-gender'>
 								Gender
 							</label>
-							<select id='field-gender' aria-label='Select...' className={inputClassName} value={formData.gender} onChange={event => handleFormChange('gender', event.currentTarget.value)}>
+							<Select id='field-gender' aria-label='Select...' value={formData.gender} onChange={event => handleFormChange('gender', event.currentTarget.value)}>
 								<option value=''>Select...</option>
 								<option value='Male'>Male</option>
 								<option value='Female'>Female</option>
 								<option value='Other'>Other</option>
 								<option value='Prefer not to specify'>Prefer not to specify</option>
-							</select>
+							</Select>
 						</div>
 						<div className='grid gap-1'>
 							<label className='text-sm font-medium leading-none text-primary-11' htmlFor='field-age'>
 								Age
 							</label>
-							<input id='field-age' type='number' placeholder='52' className={inputClassName} value={formData.age} onChange={event => handleFormChange('age', event.currentTarget.value)} />
+							<Input id='field-age' type='number' placeholder='52' value={formData.age} onChange={event => handleFormChange('age', event.currentTarget.value)} />
 						</div>
 					</div>
 
@@ -177,29 +174,18 @@ export default function GpDemo(): React.JSX.Element | null {
 							{SYMPTOMS.map(symptom => {
 								const selected = selSymptoms.includes(symptom.id);
 								return (
-									<button
-										key={symptom.id}
-										type='button'
-										aria-pressed={selected}
-										data-state={selected ? 'checked' : 'unchecked'}
-										onClick={() => toggleSymptom(symptom.id)}
-										className='flex w-full flex-col items-start space-y-1 rounded-lg border border-primary-5 bg-primary-2 p-2.5 text-left text-sm text-primary-12 ring-inset transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-7/70 enabled:hover:border-primary-6 data-[state=checked]:!border-primary-9 data-[state=checked]:ring-1 data-[state=checked]:ring-primary-9'
-									>
+									<Button key={symptom.id} aria-pressed={selected} data-state={selected ? 'checked' : 'unchecked'} onClick={() => toggleSymptom(symptom.id)} variant='symptom'>
 										<span className='font-medium'>{symptom.label}</span>
-									</button>
+									</Button>
 								);
 							})}
 						</div>
 					</div>
 
 					<div className='pt-2'>
-						<button
-							type='button'
-							onClick={handleGpReferral}
-							className='inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-rose-700 bg-rose-600 px-4 text-base font-semibold text-white transition-colors hover:bg-rose-600/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
-						>
+						<Button onClick={handleGpReferral} variant='destructive'>
 							Refer to Ambulance Dispatch
-						</button>
+						</Button>
 					</div>
 				</div>
 			</div>
