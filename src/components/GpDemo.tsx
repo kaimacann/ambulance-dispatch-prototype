@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
 
 /** Patient contact and demographic fields collected for a referral. */
 type PatientFormData = {
@@ -10,17 +11,6 @@ type PatientFormData = {
 	age: string;
 };
 
-/** Minimal local record used to show the emergency dispatch referral result. */
-type PatientRec = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	score: number;
-	eta: string;
-	status: 'pending' | 'dispatched';
-	timeSeconds: number;
-};
-
 const SYMPTOMS = [
 	{ id: 'chest_pain', label: 'Chest Pain', weight: 55 },
 	{ id: 'breathing', label: 'Difficulty Breathing', weight: 45 },
@@ -30,37 +20,6 @@ const SYMPTOMS = [
 	{ id: 'nausea', label: 'Nausea', weight: 10 },
 	{ id: 'fever', label: 'High Fever', weight: 20 },
 	{ id: 'bleeding', label: 'Severe Bleeding', weight: 50 },
-];
-
-const PATIENTS_STORAGE_KEY = 'terra-patients';
-const INITIAL_PATIENTS: PatientRec[] = [
-	{
-		id: 'patient-1',
-		firstName: 'Sarah',
-		lastName: 'Connor',
-		score: 85,
-		eta: '6-8',
-		status: 'pending',
-		timeSeconds: 45,
-	},
-	{
-		id: 'patient-2',
-		firstName: 'Kyle',
-		lastName: 'Reese',
-		score: 42,
-		eta: 'N/A',
-		status: 'pending',
-		timeSeconds: 112,
-	},
-	{
-		id: 'patient-3',
-		firstName: 'Miles',
-		lastName: 'Dyson',
-		score: 92,
-		eta: '3-5',
-		status: 'dispatched',
-		timeSeconds: 15,
-	},
 ];
 
 const inputClassName =
@@ -110,7 +69,7 @@ export default function GpDemo(): React.JSX.Element | null {
 	);
 
 	const savePatient = () => {
-		const patient: PatientRec = {
+		const patient: Patient = {
 			id: crypto.randomUUID(),
 			firstName: formData.firstName || 'Unknown',
 			lastName: formData.lastName || 'Patient',
