@@ -19,9 +19,9 @@ const { title = 'GP Triage Demo' } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<Surface as="header" variant="primary" className="border-b px-4 py-3 shadow-sm">
+		<Surface as="header" className="border-b px-4 py-3 shadow-sm">
 			<nav class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3" aria-label="Demo sections">
-				<ActionLink href="/" variant="primary-ghost" size="md">GP Triage</ActionLink>
+				<ActionLink href="/" size="md">GP Triage</ActionLink>
 				<div class="flex flex-wrap gap-2">
 					<ActionLink href="/">GP assessment</ActionLink>
 					<ActionLink href="/wireframes">Triage workflow</ActionLink>

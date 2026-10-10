@@ -112,7 +112,11 @@
     "MarriageGraphNode",
     "GenealogyNode",
     "PatientFormData",
-    "PatientRec"
+    "PatientRec",
+    "fieldKey",
+    "fieldType",
+    "fieldPlaceholder",
+    "description"
   ],
   "tools": {
     "prettier": "prettier",

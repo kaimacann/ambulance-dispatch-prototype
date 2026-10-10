@@ -1,16 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EMPTY_PATIENT_DETAILS, INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient, type PatientDetails } from '../lib/patients';
 import { SYMPTOMS, symptomScore } from '../lib/symptoms';
 import { Button, Input, Select, Surface, Textarea, ToggleButton } from './ui/controls';
 
 /** Selects the nurse intake view or ambulance dispatch queue. */
 type Props = { mode: 'nurse' | 'ambulance' };
-const panelClass = 'rounded-xl border p-5 shadow-sm';
+const panelClass = 'rounded-xl p-5 shadow-sm';
 
-/**
- * Loads saved patient assessments, using the fixture queue when storage is empty or unavailable.
- *
- * @returns The saved dispatch queue or its demonstration seed records.
+/** Loads saved assessments, falling back to the fixture queue when storage is unavailable or empty.
+ * @returns Stored patients, or the initial fixture patients when none are saved.
  */
 function readPatients(): Patient[] {
 	try {
@@ -21,11 +19,8 @@ function readPatients(): Patient[] {
 	}
 }
 
-/**
- * Persists the current simulated dispatch queue for the browser demo.
- *
- * @param patients - Complete patient queue to serialize in local browser storage.
- * @returns Nothing; unavailable storage leaves the current screen state usable.
+/** Saves the simulated dispatch queue when browser storage is available.
+ * @param patients - Current patient queue to serialize into browser storage.
  */
 function writePatients(patients: Patient[]): void {
 	try {
@@ -35,21 +30,17 @@ function writePatients(patients: Patient[]): void {
 	}
 }
 
-/**
- * Formats elapsed assessment time as zero-padded minutes and seconds.
- *
- * @param seconds - Non-negative elapsed duration measured by the intake timer.
- * @returns A clock label in `MM:SS` form.
+/** Formats elapsed time as `MM:SS`.
+ * @param seconds - Elapsed duration in whole seconds.
+ * @returns The duration formatted with two-digit minutes and seconds.
  */
 function timeLabel(seconds: number): string {
 	return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
-/**
- * Maps a triage score to the dispatch priority band used by this demo.
- *
- * @param score - Assessment severity score on the 0–100 scale.
- * @returns The critical, medium, or low priority label for the score.
+/** Maps the triage score to the dispatch priority label.
+ * @param score - Numeric triage score produced from selected symptoms.
+ * @returns Critical, medium, or low priority for the dispatch queue.
  */
 function priority(score: number): 'Critical' | 'Medium' | 'Low' {
 	return score >= 75 ? 'Critical' : score >= 40 ? 'Medium' : 'Low';
@@ -70,7 +61,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 	const [step, setStep] = useState<'intake' | 'result'>('intake');
 	const [patients, setPatients] = useState<Patient[]>([]);
 	const [selectedId, setSelectedId] = useState('');
-	const score = useMemo(() => symptomScore(selectedSymptoms), [selectedSymptoms]);
+	const score = symptomScore(selectedSymptoms);
 
 	useEffect(() => {
 		setMounted(true);
@@ -95,7 +86,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 		};
 		return (
 			<div className='mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(18rem,0.8fr)_minmax(0,1.5fr)]'>
-				<Surface as='section' variant='primary' className={`${panelClass} flex min-h-[32rem] flex-col`} aria-labelledby='queue-heading'>
+				<Surface as='section' className={`${panelClass} flex min-h-[32rem] flex-col`} aria-labelledby='queue-heading'>
 					<p className='mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-primary-9'>Emergency services</p>
 					<h1 id='queue-heading' className='mb-4 mt-0 text-2xl font-semibold'>
 						Dispatch requests
@@ -105,15 +96,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 					) : (
 						<div className='flex flex-col gap-2' role='list' aria-label='Patients awaiting dispatch'>
 							{patients.map(patient => (
-								<ToggleButton
-									key={patient.id}
-									role='listitem'
-									aria-pressed={selectedId === patient.id}
-									onClick={() => setSelectedId(patient.id)}
-									variant='primary-outline'
-									size='lg'
-									className='justify-between'
-								>
+								<ToggleButton key={patient.id} role='listitem' aria-pressed={selectedId === patient.id} onClick={() => setSelectedId(patient.id)} size='lg' className='justify-between'>
 									<span>
 										<span className='block font-semibold'>
 											{patient.firstName} {patient.lastName}
@@ -128,7 +111,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 						</div>
 					)}
 				</Surface>
-				<Surface as='section' variant='primary' className={`${panelClass} flex min-h-[32rem] flex-col`} aria-live='polite'>
+				<Surface as='section' className={`${panelClass} flex min-h-[32rem] flex-col`} aria-live='polite'>
 					{selectedPatient ? (
 						<DispatchDetails patient={selectedPatient} onDispatch={dispatch} />
 					) : (
@@ -167,7 +150,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 		<div className='mx-auto w-full max-w-6xl'>
 			{step === 'intake' ? (
 				<>
-					<Surface as='header' variant='primary' className='mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border px-5 py-4 shadow-sm'>
+					<Surface as='header' className='mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl px-5 py-4 shadow-sm'>
 						<div>
 							<p className='mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-primary-9'>Nurse intake · simulated case</p>
 							<h1 className='m-0 text-2xl font-semibold'>Patient assessment</h1>
@@ -177,7 +160,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 						</Surface>
 					</Surface>
 					<div className='grid items-start gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]'>
-						<Surface as='section' variant='primary' className={panelClass} aria-labelledby='caller-heading'>
+						<Surface as='section' className={panelClass} aria-labelledby='caller-heading'>
 							<div className='mb-5 flex items-center justify-between'>
 								<h2 id='caller-heading' className='m-0 text-xl font-semibold'>
 									Caller & patient details
@@ -196,19 +179,12 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 								).map(field => (
 									<label key={field.key} className='text-sm font-medium'>
 										{field.label}
-										<Input
-											variant='primary'
-											size='md'
-											className='mt-1'
-											type={field.type}
-											value={intake[field.key]}
-											onChange={event => setIntake(current => ({ ...current, [field.key]: event.currentTarget.value }))}
-										/>
+										<Input className='mt-1' type={field.type} value={intake[field.key]} onChange={event => setIntake(current => ({ ...current, [field.key]: event.currentTarget.value }))} />
 									</label>
 								))}
 								<label className='text-sm font-medium'>
 									Gender
-									<Select variant='primary' size='md' className='mt-1' value={intake.gender} onChange={event => setIntake(current => ({ ...current, gender: event.currentTarget.value }))}>
+									<Select className='mt-1' value={intake.gender} onChange={event => setIntake(current => ({ ...current, gender: event.currentTarget.value }))}>
 										<option value=''>Select…</option>
 										<option>Female</option>
 										<option>Male</option>
@@ -229,7 +205,6 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 												key={item.id}
 												aria-pressed={checked}
 												onClick={() => setSelectedSymptoms(current => (checked ? current.filter(id => id !== item.id) : [...current, item.id]))}
-												variant='primary-outline'
 												size='sm'
 											>
 												{item.nurseLabel}
@@ -242,13 +217,11 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 								<span className='text-sm text-primary-9'>
 									Current triage score: <strong className='text-primary-12'>{score} / 100</strong>
 								</span>
-								<Button variant='primary' size='md' onClick={() => setStep('result')}>
-									Review assessment →
-								</Button>
+								<Button onClick={() => setStep('result')}>Review assessment →</Button>
 							</div>
 						</Surface>
 						<aside className='flex flex-col gap-5'>
-							<Surface as='section' variant='primary' className={panelClass}>
+							<Surface as='section' className={panelClass}>
 								<h2 className='mb-3 mt-0 text-lg font-semibold'>Assessment progress</h2>
 								<div className='space-y-3'>
 									{progress.map(item => (
@@ -264,7 +237,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 									))}
 								</div>
 							</Surface>
-							<Surface as='section' variant='primary' className={panelClass}>
+							<Surface as='section' className={panelClass}>
 								<h2 className='mb-2 mt-0 text-lg font-semibold'>Suggested questions</h2>
 								<ul className='mb-0 space-y-2 pl-5 text-sm text-primary-10'>
 									<li>When did the symptoms begin?</li>
@@ -272,15 +245,15 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 									<li>Does the patient have relevant medical history?</li>
 								</ul>
 							</Surface>
-							<Surface as='section' variant='primary' className={`${panelClass} border-dashed`}>
+							<Surface as='section' className={`${panelClass} border-dashed`}>
 								<h2 className='mb-2 mt-0 text-lg font-semibold'>Handover notes</h2>
-								<Textarea variant='primary' size='md' aria-label='Handover notes' placeholder='Record notes for the receiving team' />
+								<Textarea aria-label='Handover notes' placeholder='Record notes for the receiving team' />
 							</Surface>
 						</aside>
 					</div>
 				</>
 			) : (
-				<Surface as='section' variant='primary' className={`${panelClass} mx-auto max-w-3xl`} aria-labelledby='result-heading'>
+				<Surface as='section' className={`${panelClass} mx-auto max-w-3xl`} aria-labelledby='result-heading'>
 					<div className='mb-5 flex flex-wrap items-start justify-between gap-4'>
 						<div>
 							<p className='mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-primary-9'>Nurse intake · assessment result</p>
@@ -309,11 +282,11 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 							</p>
 						</div>
 					</div>
-					<Surface variant='primary-tonal' className='mt-6 rounded-lg border p-4'>
+					<Surface variant='primary-tonal' className='mt-6 rounded-lg p-4'>
 						<h2 className='mb-3 mt-0 text-base font-semibold'>Information completeness</h2>
 						<div className='grid grid-cols-2 gap-3 sm:grid-cols-4'>
 							{progress.map(item => (
-								<Surface key={item.label} variant='primary' className='rounded-md border p-3'>
+								<Surface key={item.label} className='rounded-md p-3'>
 									<p className='m-0 text-xs text-primary-9'>{item.label}</p>
 									<p className='mb-0 mt-1 font-semibold'>{item.value}%</p>
 								</Surface>
@@ -324,7 +297,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 						<Button variant='primary-outline' size='sm' onClick={() => setStep('intake')}>
 							← Back to assessment
 						</Button>
-						<Button variant='primary' size='sm' onClick={finish}>
+						<Button size='sm' onClick={finish}>
 							Add to dispatch queue
 						</Button>
 					</div>
@@ -388,7 +361,7 @@ function DispatchDetails({ patient, onDispatch }: { patient: Patient; onDispatch
 					<p className='m-0 font-semibold'>{advice}</p>
 				</div>
 			</div>
-			<Surface variant='primary-tonal' className='my-8 rounded-xl border p-5'>
+			<Surface variant='primary-tonal' className='my-8 rounded-xl p-5'>
 				<div className='mb-2 flex justify-between text-sm'>
 					<span>Severity score</span>
 					<strong>{patient.score} / 100</strong>
