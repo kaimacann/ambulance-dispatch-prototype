@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
+import { Button, Input, Select, Textarea } from './ui/controls';
 
 /** Selects the nurse intake view or ambulance dispatch queue. */
 type Props = { mode: 'nurse' | 'ambulance' };
@@ -17,7 +18,6 @@ const SYMPTOMS = [
 	{ id: 'bleeding', label: 'Severe bleeding', weight: 50 },
 ];
 const EMPTY_INTAKE: Intake = { firstName: '', lastName: '', phone: '', location: '', gender: '', age: '' };
-const inputClass = 'mt-1 h-10 w-full rounded-md border border-primary-6 bg-white px-3 text-primary-12 placeholder:text-primary-8';
 const panelClass = 'rounded-xl border border-primary-5 bg-white p-5 shadow-sm';
 
 /**
@@ -125,13 +125,13 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 					) : (
 						<div className='flex flex-col gap-2' role='list' aria-label='Patients awaiting dispatch'>
 							{patients.map(patient => (
-								<button
+								<Button
 									key={patient.id}
-									type='button'
 									role='listitem'
 									aria-pressed={selectedId === patient.id}
 									onClick={() => setSelectedId(patient.id)}
-									className={`flex items-center justify-between rounded-lg border p-4 text-left transition ${selectedId === patient.id ? 'border-primary-9 bg-primary-2 ring-1 ring-primary-9' : 'border-primary-4 hover:bg-primary-2'}`}
+									variant='selectable'
+									className='flex items-center justify-between p-4'
 								>
 									<span>
 										<span className='block font-semibold'>
@@ -142,7 +142,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 									<span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${patient.status === 'pending' ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900'}`}>
 										{patient.status === 'pending' ? 'Pending' : 'Dispatched'}
 									</span>
-								</button>
+								</Button>
 							))}
 						</div>
 					)}
@@ -215,18 +215,18 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 								).map(field => (
 									<label key={field.key} className='text-sm font-medium'>
 										{field.label}
-										<input className={inputClass} type={field.type} value={intake[field.key]} onChange={event => setIntake(current => ({ ...current, [field.key]: event.currentTarget.value }))} />
+										<Input variant='intake' type={field.type} value={intake[field.key]} onChange={event => setIntake(current => ({ ...current, [field.key]: event.currentTarget.value }))} />
 									</label>
 								))}
 								<label className='text-sm font-medium'>
 									Gender
-									<select className={inputClass} value={intake.gender} onChange={event => setIntake(current => ({ ...current, gender: event.currentTarget.value }))}>
+									<Select variant='intake' value={intake.gender} onChange={event => setIntake(current => ({ ...current, gender: event.currentTarget.value }))}>
 										<option value=''>Select…</option>
 										<option>Female</option>
 										<option>Male</option>
 										<option>Other</option>
 										<option>Prefer not to specify</option>
-									</select>
+									</Select>
 								</label>
 							</div>
 							<fieldset className='mt-6 border-0 p-0'>
@@ -237,15 +237,15 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 									{SYMPTOMS.map(item => {
 										const checked = selectedSymptoms.includes(item.id);
 										return (
-											<button
+											<Button
 												key={item.id}
-												type='button'
 												aria-pressed={checked}
 												onClick={() => setSelectedSymptoms(current => (checked ? current.filter(id => id !== item.id) : [...current, item.id]))}
-												className={`min-h-12 rounded-lg border px-3 py-2 text-left text-sm font-medium transition ${checked ? 'border-primary-9 bg-primary-2 ring-1 ring-primary-9' : 'border-primary-4 bg-white hover:bg-primary-2'}`}
+												variant='selectable-white'
+												className='min-h-12 px-3 py-2 text-sm font-medium'
 											>
 												{item.label}
-											</button>
+											</Button>
 										);
 									})}
 								</div>
@@ -254,9 +254,9 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 								<span className='text-sm text-primary-9'>
 									Current triage score: <strong className='text-primary-12'>{score} / 100</strong>
 								</span>
-								<button type='button' onClick={() => setStep('result')} className='rounded-md bg-primary-9 px-5 py-2.5 font-semibold text-white hover:bg-primary-10'>
+								<Button size='md' onClick={() => setStep('result')}>
 									Review assessment →
-								</button>
+								</Button>
 							</div>
 						</section>
 						<aside className='flex flex-col gap-5'>
@@ -286,7 +286,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 							</section>
 							<section className={`${panelClass} border-dashed`}>
 								<h2 className='mb-2 mt-0 text-lg font-semibold'>Handover notes</h2>
-								<textarea className='min-h-24 w-full resize-y rounded-md border border-primary-5 p-3 text-sm' aria-label='Handover notes' placeholder='Record notes for the receiving team' />
+								<Textarea aria-label='Handover notes' placeholder='Record notes for the receiving team' />
 							</section>
 						</aside>
 					</div>
@@ -333,12 +333,12 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 						</div>
 					</div>
 					<div className='mt-6 flex flex-col-reverse justify-between gap-3 sm:flex-row'>
-						<button type='button' onClick={() => setStep('intake')} className='rounded-md border border-primary-5 px-4 py-2 font-semibold hover:bg-primary-2'>
+						<Button variant='outline' size='sm' onClick={() => setStep('intake')}>
 							← Back to assessment
-						</button>
-						<button type='button' onClick={finish} className='rounded-md bg-primary-9 px-4 py-2 font-semibold text-white hover:bg-primary-10'>
+						</Button>
+						<Button size='sm' onClick={finish}>
 							Add to dispatch queue
-						</button>
+						</Button>
 					</div>
 				</section>
 			)}
@@ -420,14 +420,9 @@ function DispatchDetails({ patient, onDispatch }: { patient: Patient; onDispatch
 					Estimated arrival: <strong>{patient.eta} min</strong>
 				</p>
 			)}
-			<button
-				type='button'
-				disabled={patient.status === 'dispatched'}
-				onClick={() => onDispatch(patient)}
-				className='mt-auto rounded-md bg-primary-9 px-4 py-3 font-semibold text-white hover:bg-primary-10 disabled:cursor-not-allowed disabled:opacity-60'
-			>
+			<Button disabled={patient.status === 'dispatched'} onClick={() => onDispatch(patient)} size='lg' className='mt-auto'>
 				{patient.status === 'dispatched' ? 'Already dispatched' : 'Dispatch ambulance'}
-			</button>
+			</Button>
 		</>
 	);
 }
