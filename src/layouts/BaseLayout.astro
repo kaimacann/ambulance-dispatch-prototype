@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ActionLink from '../components/ui/ActionLink.astro';
 
 interface Props {
 	title?: string;
@@ -19,12 +20,12 @@ const { title = 'GP Triage Demo' } = Astro.props;
 	<body>
 		<header class="border-b border-primary-4 bg-white px-4 py-3 shadow-sm">
 			<nav class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3" aria-label="Demo sections">
-				<a class="font-semibold text-primary-12 no-underline" href="/">GP Triage</a>
-				<div class="flex flex-wrap gap-2 text-sm font-medium">
-					<a class="rounded-md px-3 py-2 text-primary-10 hover:bg-primary-2" href="/">GP assessment</a>
-					<a class="rounded-md px-3 py-2 text-primary-10 hover:bg-primary-2" href="/wireframes">Triage workflow</a>
-					<a class="rounded-md px-3 py-2 text-primary-10 hover:bg-primary-2" href="/nurse">Nurse intake</a>
-					<a class="rounded-md px-3 py-2 text-primary-10 hover:bg-primary-2" href="/ambulance">Ambulance dispatch</a>
+				<ActionLink href="/" variant="primary-ghost" size="md">GP Triage</ActionLink>
+				<div class="flex flex-wrap gap-2">
+					<ActionLink href="/">GP assessment</ActionLink>
+					<ActionLink href="/wireframes">Triage workflow</ActionLink>
+					<ActionLink href="/nurse">Nurse intake</ActionLink>
+					<ActionLink href="/ambulance">Ambulance dispatch</ActionLink>
 				</div>
 			</nav>
 		</header>
