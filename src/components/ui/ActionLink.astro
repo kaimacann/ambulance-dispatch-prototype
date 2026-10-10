@@ -1,0 +1,22 @@
+---
+import { ACTION_SIZES, actionClass, type ActionVariant, type UiSize } from './controls';
+
+interface Props {
+	href: string;
+	variant?: ActionVariant;
+	size?: UiSize;
+}
+
+const { href, variant = 'primary-ghost', size = 'sm' } = Astro.props;
+---
+
+<a
+	href={href}
+	class:list={[
+		'inline-flex items-center justify-center rounded-md font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+		actionClass(variant),
+		ACTION_SIZES[size],
+	]}
+>
+	<slot />
+</a>
