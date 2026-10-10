@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
+import { SYMPTOMS } from '../lib/symptoms';
 import { Button, Input, Select, ToggleButton } from './ui/controls';
 
 /** Patient contact and demographic fields collected for a referral. */
@@ -11,17 +12,6 @@ type PatientFormData = {
 	gender: string;
 	age: string;
 };
-
-const SYMPTOMS = [
-	{ id: 'chest_pain', label: 'Chest Pain', weight: 55 },
-	{ id: 'breathing', label: 'Difficulty Breathing', weight: 45 },
-	{ id: 'unconscious', label: 'Unconscious', weight: 80 },
-	{ id: 'dizziness', label: 'Dizziness', weight: 25 },
-	{ id: 'headache', label: 'Headache', weight: 15 },
-	{ id: 'nausea', label: 'Nausea', weight: 10 },
-	{ id: 'fever', label: 'High Fever', weight: 20 },
-	{ id: 'bleeding', label: 'Severe Bleeding', weight: 50 },
-];
 
 /** Renders the interactive GP triage form and its local referral timer demo.
  * @returns The triage interface after client hydration, or `null` during server rendering.
@@ -165,7 +155,7 @@ export default function GpDemo(): React.JSX.Element | null {
 										size='sm'
 										className='w-full flex-col items-start space-y-1'
 									>
-										<span className='font-medium'>{symptom.label}</span>
+										<span className='font-medium'>{symptom.gpLabel}</span>
 									</ToggleButton>
 								);
 							})}

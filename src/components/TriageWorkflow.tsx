@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
+import { SYMPTOMS } from '../lib/symptoms';
 import { Button, Input, Select, Textarea, ToggleButton } from './ui/controls';
 
 /** Selects the nurse intake view or ambulance dispatch queue. */
@@ -7,16 +8,6 @@ type Props = { mode: 'nurse' | 'ambulance' };
 /** Caller and patient details collected during the simulated nurse intake. */
 type Intake = { firstName: string; lastName: string; phone: string; location: string; gender: string; age: string };
 
-const SYMPTOMS = [
-	{ id: 'chest_pain', label: 'Chest pain', weight: 55 },
-	{ id: 'breathing', label: 'Difficulty breathing', weight: 45 },
-	{ id: 'unconscious', label: 'Unconscious', weight: 80 },
-	{ id: 'dizziness', label: 'Dizziness', weight: 25 },
-	{ id: 'headache', label: 'Headache', weight: 15 },
-	{ id: 'nausea', label: 'Nausea', weight: 10 },
-	{ id: 'fever', label: 'High fever', weight: 20 },
-	{ id: 'bleeding', label: 'Severe bleeding', weight: 50 },
-];
 const EMPTY_INTAKE: Intake = { firstName: '', lastName: '', phone: '', location: '', gender: '', age: '' };
 const panelClass = 'rounded-xl border border-primary-5 bg-white p-5 shadow-sm';
 
@@ -252,7 +243,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 												variant='primary-outline'
 												size='sm'
 											>
-												{item.label}
+												{item.nurseLabel}
 											</ToggleButton>
 										);
 									})}

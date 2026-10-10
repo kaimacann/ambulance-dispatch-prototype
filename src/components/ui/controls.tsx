@@ -73,7 +73,7 @@ export const CONTROL_VARIANTS = {
 	},
 } satisfies Record<UiColor, Record<ControlTreatment, string>>;
 
-const ACTION_SIZES: Record<UiSize, string> = {
+export const ACTION_SIZES: Record<UiSize, string> = {
 	xs: 'min-h-8 gap-1 px-2.5 text-xs',
 	sm: 'min-h-9 gap-1.5 px-3 text-sm',
 	md: 'min-h-10 gap-2 px-4 py-2 text-sm',
@@ -94,6 +94,13 @@ const TEXTAREA_SIZES: Record<UiSize, string> = {
 	md: 'px-3 py-2 text-sm',
 	lg: 'px-4 py-3 text-base',
 	xl: 'px-4 py-3 text-lg',
+};
+const TOGGLE_SIZES: Record<UiSize, string> = {
+	xs: 'min-h-8 px-2 py-1 text-xs',
+	sm: 'min-h-9 px-2.5 py-1.5 text-sm',
+	md: 'min-h-10 px-3 py-2 text-sm',
+	lg: 'min-h-11 px-4 py-2.5 text-base',
+	xl: 'min-h-12 px-5 py-3 text-base',
 };
 
 type LegacyButtonVariant = 'outline';
@@ -128,7 +135,7 @@ function resolveVariant<T extends string>(variant: T, aliases: Partial<Record<T,
 	return aliases[variant] ?? variant;
 }
 
-function actionClass(variant: ActionVariant): string {
+export function actionClass(variant: ActionVariant): string {
 	const [color, treatment = 'default'] = variant.split('-') as [UiColor, ActionTreatment?];
 	return ACTION_VARIANTS[color][treatment];
 }
@@ -166,7 +173,7 @@ export const ToggleButton = React.forwardRef<
 >(({ className, variant = 'primary-outline', size = 'md', type = 'button', ...props }, ref) => {
 	const resolved = resolveVariant(variant, LEGACY_TOGGLE_VARIANTS) as ControlVariant;
 	const selected = props['aria-pressed'] === true;
-	return <button ref={ref} type={type} className={classes(TOGGLE_BASE, selected ? selectedToggleClass(resolved) : controlClass(resolved), ACTION_SIZES[size], className)} {...props} />;
+	return <button ref={ref} type={type} className={classes(TOGGLE_BASE, selected ? selectedToggleClass(resolved) : controlClass(resolved), TOGGLE_SIZES[size], className)} {...props} />;
 });
 ToggleButton.displayName = 'ToggleButton';
 
