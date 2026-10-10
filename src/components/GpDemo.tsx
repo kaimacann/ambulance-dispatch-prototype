@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react';
-import { INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient } from '../lib/patients';
+import { EMPTY_PATIENT_DETAILS, INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient, type PatientDetails } from '../lib/patients';
 import { SYMPTOMS, symptomScore } from '../lib/symptoms';
-import { Button, Input, Select, ToggleButton } from './ui/controls';
-
-/** Patient contact and demographic fields collected for a referral. */
-type PatientFormData = {
-	firstName: string;
-	lastName: string;
-	phone: string;
-	location: string;
-	gender: string;
-	age: string;
-};
+import { Button, Input, Select, Surface, ToggleButton } from './ui/controls';
 
 /** Renders the interactive GP triage form and its local referral timer demo.
  * @returns The triage interface after client hydration, or `null` during server rendering.
@@ -20,14 +10,7 @@ export default function GpDemo(): React.JSX.Element | null {
 	const [isMounted, setIsMounted] = useState(false);
 	const [selSymptoms, setSelSymptoms] = useState<string[]>([]);
 	const [seconds, setSeconds] = useState(0);
-	const [formData, setFormData] = useState<PatientFormData>({
-		firstName: '',
-		lastName: '',
-		phone: '',
-		location: '',
-		gender: '',
-		age: '',
-	});
+	const [formData, setFormData] = useState<PatientDetails>(EMPTY_PATIENT_DETAILS);
 
 	useEffect(() => {
 		setIsMounted(true);
@@ -40,7 +23,7 @@ export default function GpDemo(): React.JSX.Element | null {
 		return () => clearInterval(timer);
 	}, []);
 
-	const handleFormChange = (key: keyof PatientFormData, value: string) => {
+	const handleFormChange = (key: keyof PatientDetails, value: string) => {
 		setFormData(previous => ({ ...previous, [key]: value }));
 	};
 
@@ -78,14 +61,14 @@ export default function GpDemo(): React.JSX.Element | null {
 
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col'>
-			<div className='mb-6 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-900'>
+			<Surface variant='secondary-tonal' className='mb-6 flex items-start gap-3 rounded-lg border p-4'>
 				<svg className='mt-0.5 size-5 shrink-0' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.8' aria-hidden='true'>
 					<circle cx='12' cy='12' r='9' />
 					<path d='M12 11v5m0-8h.01' strokeLinecap='round' />
 				</svg>
 				<p className='text-sm font-medium'>For patients in critical condition, transfer the patient information to emergency services for prompt service.</p>
-			</div>
-			<div className='flex flex-col overflow-auto rounded-xl border border-primary-6 bg-primary-2 text-primary-12 shadow-sm'>
+			</Surface>
+			<Surface variant='primary-tonal' className='flex flex-col overflow-auto rounded-xl border shadow-sm'>
 				<div className='flex flex-col space-y-1.5 p-6 pb-0 pt-4'>
 					<h1 className='m-0 text-base font-semibold leading-none tracking-tight'>Patient Info</h1>
 				</div>
@@ -162,7 +145,7 @@ export default function GpDemo(): React.JSX.Element | null {
 						</Button>
 					</div>
 				</div>
-			</div>
+			</Surface>
 		</div>
 	);
 }
