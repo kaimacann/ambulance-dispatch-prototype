@@ -94,7 +94,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 			writePatients(updated);
 		};
 		return (
-			<main className='mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(18rem,0.8fr)_minmax(0,1.5fr)]'>
+			<div className='mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(18rem,0.8fr)_minmax(0,1.5fr)]'>
 				<Surface as='section' variant='primary' className={`${panelClass} flex min-h-[32rem] flex-col`} aria-labelledby='queue-heading'>
 					<p className='mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-primary-9'>Emergency services</p>
 					<h1 id='queue-heading' className='mb-4 mt-0 text-2xl font-semibold'>
@@ -140,7 +140,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 						</div>
 					)}
 				</Surface>
-			</main>
+			</div>
 		);
 	}
 
@@ -164,7 +164,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 	};
 
 	return (
-		<main className='mx-auto w-full max-w-6xl'>
+		<div className='mx-auto w-full max-w-6xl'>
 			{step === 'intake' ? (
 				<>
 					<Surface as='header' variant='primary' className='mb-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border px-5 py-4 shadow-sm'>
@@ -330,7 +330,7 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 					</div>
 				</Surface>
 			)}
-		</main>
+		</div>
 	);
 }
 

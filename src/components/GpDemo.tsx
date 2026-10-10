@@ -126,7 +126,6 @@ export default function GpDemo(): React.JSX.Element | null {
 									<ToggleButton
 										key={symptom.id}
 										aria-pressed={selected}
-										data-state={selected ? 'checked' : 'unchecked'}
 										onClick={() => toggleSymptom(symptom.id)}
 										variant='primary-tonal'
 										size='sm'
