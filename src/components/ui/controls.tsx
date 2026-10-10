@@ -10,6 +10,7 @@ export type SurfaceVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' |
 
 type ActionTreatment = Exclude<UiType, 'saturated'>;
 type ControlTreatment = Extract<UiType, 'default' | 'outline' | 'ghost' | 'tonal'>;
+type SurfaceTreatment = Exclude<UiType, 'link' | 'underline'>;
 
 export const ACTION_VARIANTS = {
 	primary: {
@@ -73,6 +74,37 @@ export const CONTROL_VARIANTS = {
 	},
 } satisfies Record<UiColor, Record<ControlTreatment, string>>;
 
+export const SURFACE_VARIANTS = {
+	primary: {
+		default: 'border-primary-5 bg-white text-primary-12',
+		outline: 'border-primary-5 bg-transparent text-primary-12',
+		ghost: 'border-transparent bg-transparent text-primary-12',
+		tonal: 'border-primary-3 bg-primary-2 text-primary-12',
+		saturated: 'border-primary-9 bg-primary-9 text-white',
+	},
+	secondary: {
+		default: 'border-blue-300 bg-white text-blue-900',
+		outline: 'border-blue-300 bg-transparent text-blue-800',
+		ghost: 'border-transparent bg-transparent text-blue-800',
+		tonal: 'border-blue-200 bg-blue-50 text-blue-900',
+		saturated: 'border-blue-600 bg-blue-600 text-white',
+	},
+	gray: {
+		default: 'border-gray-300 bg-white text-gray-900',
+		outline: 'border-gray-300 bg-transparent text-gray-800',
+		ghost: 'border-transparent bg-transparent text-gray-800',
+		tonal: 'border-gray-200 bg-gray-100 text-gray-900',
+		saturated: 'border-gray-700 bg-gray-700 text-white',
+	},
+	destructive: {
+		default: 'border-rose-300 bg-white text-rose-900',
+		outline: 'border-rose-300 bg-transparent text-rose-800',
+		ghost: 'border-transparent bg-transparent text-rose-800',
+		tonal: 'border-rose-200 bg-rose-50 text-rose-900',
+		saturated: 'border-rose-600 bg-rose-600 text-white',
+	},
+} satisfies Record<UiColor, Record<SurfaceTreatment, string>>;
+
 export const ACTION_SIZES: Record<UiSize, string> = {
 	xs: 'min-h-8 gap-1 px-2.5 text-xs',
 	sm: 'min-h-9 gap-1.5 px-3 text-sm',
@@ -103,18 +135,6 @@ const TOGGLE_SIZES: Record<UiSize, string> = {
 	xl: 'min-h-12 px-5 py-3 text-base',
 };
 
-type LegacyButtonVariant = 'outline';
-type LegacyToggleVariant = 'selectable' | 'selectable-white' | 'symptom';
-type LegacyFieldVariant = 'gp' | 'intake';
-
-const LEGACY_BUTTON_VARIANTS: Record<LegacyButtonVariant, ActionVariant> = { outline: 'primary-outline' };
-const LEGACY_TOGGLE_VARIANTS: Record<LegacyToggleVariant, ControlVariant> = {
-	selectable: 'primary-outline',
-	'selectable-white': 'primary-outline',
-	symptom: 'primary-tonal',
-};
-const LEGACY_FIELD_VARIANTS: Record<LegacyFieldVariant, ControlVariant> = { gp: 'primary', intake: 'primary' };
-
 const BUTTON_BASE =
 	'inline-flex items-center justify-center rounded-md font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60';
 const TOGGLE_BASE =
@@ -131,13 +151,24 @@ function classes(...values: Array<string | false | undefined>): string {
 	return values.filter(Boolean).join(' ');
 }
 
-function resolveVariant<T extends string>(variant: T, aliases: Partial<Record<T, string>>): string {
-	return aliases[variant] ?? variant;
+type SurfaceProps = React.HTMLAttributes<HTMLElement> & {
+	as?: 'div' | 'section' | 'article' | 'header' | 'span';
+	variant?: SurfaceVariant;
+};
+
+/** Renders a semantic container using the shared surface variants. */
+export function Surface({ as: Element = 'div', variant = 'primary', className, ...props }: SurfaceProps): React.JSX.Element {
+	return <Element className={classes(surfaceClass(variant), className)} {...props} />;
 }
 
 export function actionClass(variant: ActionVariant): string {
 	const [color, treatment = 'default'] = variant.split('-') as [UiColor, ActionTreatment?];
 	return ACTION_VARIANTS[color][treatment];
+}
+
+function surfaceClass(variant: SurfaceVariant): string {
+	const [color, treatment = 'default'] = variant.split('-') as [UiColor, SurfaceTreatment?];
+	return SURFACE_VARIANTS[color][treatment];
 }
 
 function controlClass(variant: ControlVariant): string {
@@ -154,12 +185,11 @@ function selectedToggleClass(variant: ControlVariant): string {
 export const Button = React.forwardRef<
 	HTMLButtonElement,
 	React.ButtonHTMLAttributes<HTMLButtonElement> & {
-		variant?: ActionVariant | LegacyButtonVariant;
+		variant?: ActionVariant;
 		size?: UiSize;
 	}
 >(({ className, variant = 'primary', size = 'md', type = 'button', ...props }, ref) => {
-	const resolved = resolveVariant(variant, LEGACY_BUTTON_VARIANTS) as ActionVariant;
-	return <button ref={ref} type={type} className={classes(BUTTON_BASE, actionClass(resolved), ACTION_SIZES[size], className)} {...props} />;
+	return <button ref={ref} type={type} className={classes(BUTTON_BASE, actionClass(variant), ACTION_SIZES[size], className)} {...props} />;
 });
 Button.displayName = 'Button';
 
@@ -167,31 +197,28 @@ Button.displayName = 'Button';
 export const ToggleButton = React.forwardRef<
 	HTMLButtonElement,
 	React.ButtonHTMLAttributes<HTMLButtonElement> & {
-		variant?: ControlVariant | LegacyToggleVariant;
+		variant?: ControlVariant;
 		size?: UiSize;
 	}
 >(({ className, variant = 'primary-outline', size = 'md', type = 'button', ...props }, ref) => {
-	const resolved = resolveVariant(variant, LEGACY_TOGGLE_VARIANTS) as ControlVariant;
 	const selected = props['aria-pressed'] === true;
-	return <button ref={ref} type={type} className={classes(TOGGLE_BASE, selected ? selectedToggleClass(resolved) : controlClass(resolved), TOGGLE_SIZES[size], className)} {...props} />;
+	return <button ref={ref} type={type} className={classes(TOGGLE_BASE, selected ? selectedToggleClass(variant) : controlClass(variant), TOGGLE_SIZES[size], className)} {...props} />;
 });
 ToggleButton.displayName = 'ToggleButton';
 
-type InputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & { variant?: ControlVariant | LegacyFieldVariant; size?: UiSize };
-type SelectProps = Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> & { variant?: ControlVariant | LegacyFieldVariant; size?: UiSize };
+type InputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & { variant?: ControlVariant; size?: UiSize };
+type SelectProps = Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> & { variant?: ControlVariant; size?: UiSize };
 type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & { variant?: ControlVariant; size?: UiSize };
 
 /** Renders a styled text input for either demo form. */
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-	const resolved = resolveVariant(variant, LEGACY_FIELD_VARIANTS) as ControlVariant;
-	return <input ref={ref} className={classes(FIELD_BASE, controlClass(resolved), FIELD_SIZES[size], variant === 'intake' && 'mt-1', className)} {...props} />;
+	return <input ref={ref} className={classes(FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...props} />;
 });
 Input.displayName = 'Input';
 
 /** Renders a styled select for either demo form. */
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-	const resolved = resolveVariant(variant, LEGACY_FIELD_VARIANTS) as ControlVariant;
-	return <select ref={ref} className={classes(FIELD_BASE, controlClass(resolved), FIELD_SIZES[size], variant === 'intake' && 'mt-1', className)} {...props} />;
+	return <select ref={ref} className={classes(FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...props} />;
 });
 Select.displayName = 'Select';
 

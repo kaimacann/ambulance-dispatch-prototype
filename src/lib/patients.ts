@@ -9,6 +9,10 @@ export type Patient = {
 	timeSeconds: number;
 };
 
+/** Caller and patient details collected during either assessment form. */
+export type PatientDetails = { firstName: string; lastName: string; phone: string; location: string; gender: string; age: string };
+export const EMPTY_PATIENT_DETAILS: PatientDetails = { firstName: '', lastName: '', phone: '', location: '', gender: '', age: '' };
+
 export const PATIENTS_STORAGE_KEY = 'terra-patients';
 export const INITIAL_PATIENTS: Patient[] = [
 	{ id: 'patient-1', firstName: 'Sarah', lastName: 'Connor', score: 85, eta: '6-8', status: 'pending', timeSeconds: 45 },
