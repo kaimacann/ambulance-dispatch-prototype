@@ -317,15 +317,29 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 function ScoreGauge({ score }: { score: number }): React.JSX.Element {
 	return (
 		<div className='mx-auto w-full max-w-48' role='img' aria-label={`Severity score ${score} out of 100`}>
+			<ScoreScale score={score} />
+		</div>
+	);
+}
+
+/** Renders the shared severity marker and labels.
+ * @param props - Score and high-end label shown by the scale.
+ * @param score - Triage score used to position the marker.
+ * @param highestLabel - Label at the high end of the scale.
+ * @returns The score marker and its three severity labels.
+ */
+function ScoreScale({ score, highestLabel = 'High' }: { score: number; highestLabel?: string }): React.JSX.Element {
+	return (
+		<>
 			<div className='relative h-4 overflow-hidden rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-600'>
 				<span className='absolute -top-1 h-6 w-1 rounded bg-primary-12 shadow' style={{ left: `${score}%` }} />
 			</div>
 			<div className='mt-2 flex justify-between text-xs text-primary-9'>
 				<span>Low</span>
 				<span>Moderate</span>
-				<span>High</span>
+				<span>{highestLabel}</span>
 			</div>
-		</div>
+		</>
 	);
 }
 
@@ -366,14 +380,7 @@ function DispatchDetails({ patient, onDispatch }: { patient: Patient; onDispatch
 					<span>Severity score</span>
 					<strong>{patient.score} / 100</strong>
 				</div>
-				<div className='relative h-4 overflow-hidden rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-600'>
-					<span className='absolute -top-1 h-6 w-1 rounded bg-primary-12 shadow' style={{ left: `${patient.score}%` }} />
-				</div>
-				<div className='mt-2 flex justify-between text-xs text-primary-9'>
-					<span>Low</span>
-					<span>Moderate</span>
-					<span>Critical</span>
-				</div>
+				<ScoreScale score={patient.score} highestLabel='Critical' />
 				<p className='mb-0 mt-5 text-sm text-primary-9'>Reported assessment completed in {timeLabel(patient.timeSeconds)}.</p>
 			</Surface>
 			{level === 'Critical' && (
