@@ -148,7 +148,7 @@ const BUTTON_BASE =
 	'inline-flex items-center justify-center rounded-md font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60';
 const TOGGLE_BASE =
 	'inline-flex items-center justify-center rounded-lg border text-left font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-60';
-const FIELD_BASE = 'block w-full rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50';
+const FIELD_BASE = 'rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50';
 const SELECTED_TOGGLE: Record<UiColor, string> = {
 	primary: 'border-primary-9 bg-primary-2 ring-1 ring-primary-9',
 	secondary: 'border-blue-600 bg-blue-50 ring-1 ring-blue-600',
@@ -248,27 +248,18 @@ type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & { varia
 
 /** Renders a styled text input for either demo form. */
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-	return <input ref={ref} className={classes(FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...props} />;
+	return <input ref={ref} className={classes('block w-full', FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...props} />;
 });
 Input.displayName = 'Input';
 
 /** Renders a styled select for either demo form. */
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-	return <select ref={ref} className={classes(FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...props} />;
+	return <select ref={ref} className={classes('block w-full', FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...props} />;
 });
 Select.displayName = 'Select';
 
 /** Renders the shared handover notes field. */
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({ className, variant = 'primary', size = 'md', ...props }, ref) => (
-	<textarea
-		ref={ref}
-		className={classes(
-			'min-h-24 w-full resize-y rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50',
-			controlClass(variant),
-			TEXTAREA_SIZES[size],
-			className,
-		)}
-		{...props}
-	/>
+	<textarea ref={ref} className={classes('min-h-24 w-full resize-y', FIELD_BASE, controlClass(variant), TEXTAREA_SIZES[size], className)} {...props} />
 ));
 Textarea.displayName = 'Textarea';
