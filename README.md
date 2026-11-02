@@ -1,30 +1,39 @@
 # GP Triage Demo
 
-A standalone static triage demo, moved out of Terra Symposium Docs. It includes the GP assessment, nurse intake, and ambulance dispatch workflows and can be run locally or hosted independently on Netlify.
+A browser-based workflow prototype for exploring GP triage, nurse review, and ambulance handover. It includes the main demo, ambulance and nurse views, and wireframes; it is for interface review and discussion, not operational care.
 
-Live demo: <https://gp-triage-demo.netlify.app>
+## Getting started
 
-## Run locally
+Requires Node.js 22.19+ and pnpm 10.30.3. From this repository root:
 
 ```sh
 pnpm install
 pnpm dev
 ```
 
-Open the local URL printed by Astro. Run `pnpm check` for type and Astro diagnostics, and `pnpm build` to create the static site in `dist/`.
+Open the local URL printed by Astro. The home page links to the workflow views.
 
-## Netlify
+### Commands
 
-The site is configured for Netlify in `netlify.toml`. Connect this repository to Netlify and use the included build command (`pnpm build`) and publish directory (`dist`). No runtime secrets or server functions are required.
+From the repository root, run `pnpm check` and `pnpm build`.
 
-## Demo behavior
+## Security and Limitations
 
-This is a simulation, not a clinical service. The forms do not send information to a server or dispatch service. Nurse intake adds a limited mock patient record to the browser's `terra-patients` local storage key, which is also read by the ambulance dispatch queue. Other entered fields remain in page memory.
+This prototype is not a clinical decision tool, patient record, or dispatch service. Use synthetic data only; do not enter real patient information or rely on it for care.
 
-The original general triage workflow is available at `/wireframes`, with a dedicated nurse intake at `/nurse` and the shared queue at `/ambulance`.
+## Structure
 
-Do not enter real patient information.
+`src/pages/` defines the home, ambulance, nurse, and wireframe routes. `src/components/` contains the triage workflow UI; Astro and styling configuration is at the root.
 
-## License
+## References
 
-MIT. See [LICENSE](LICENSE).
+- [Astro configuration](astro.config.mjs)
+- [MIT license](LICENSE)
+
+## Contributing
+
+Keep changes within the prototype scope.
+
+## Credits and license
+
+The repository declares the [MIT license](LICENSE).
