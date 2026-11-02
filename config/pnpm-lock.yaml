@@ -6,7 +6,7 @@ settings:
 
 importers:
 
-  .:
+  ..:
     dependencies:
       '@astrojs/react':
         specifier: ^6.0.4
@@ -1185,6 +1185,7 @@ packages:
   '@terra-symposium/quality@0.4.41':
     resolution: {integrity: sha512-uiMLfDV2icwIc5kN7DNcwMn9UcT6wdQB33/VXva/5FBT8hZ34Z8Ke2chZzTqHXtn3f8Ck9emaUEuYOb7Bl808A==}
     engines: {node: '>=18.18'}
+    deprecated: Renamed to @terra-symposium/standards-quality. Install the new package name instead.
     hasBin: true
 
   '@tybys/wasm-util@0.10.4':

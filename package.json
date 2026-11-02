@@ -8,9 +8,14 @@
 		"node": ">=22.19.0"
 	},
 	"scripts": {
-		"dev": "astro dev",
-		"build": "pnpm exec terra-quality error-boundaries --all && astro build",
-		"check": "astro check"
+		"dev": "astro dev --config config/astro.config.mjs",
+		"build": "node scripts/quality.mjs error-boundaries --all && astro build --config config/astro.config.mjs",
+		"check": "astro check --config config/astro.config.mjs --tsconfig config/tsconfig.json",
+		"quality": "node scripts/quality.mjs quality",
+		"quality:all": "node scripts/quality.mjs quality --all",
+		"format:check": "prettier --check . --config config/.prettierrc.mjs --ignore-path .gitignore --ignore-path config/.prettierignore",
+		"lint": "eslint . --config config/eslint.config.mjs",
+		"knip": "knip --config config/knip.json"
 	},
 	"dependencies": {
 		"@astrojs/react": "^6.0.4",
