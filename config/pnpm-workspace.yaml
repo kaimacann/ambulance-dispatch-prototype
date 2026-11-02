@@ -1,4 +1,0 @@
-onlyBuiltDependencies:
-  - esbuild
-lockfileDir: config
-virtualStoreDir: ../node_modules/.pnpm
