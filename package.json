@@ -9,10 +9,8 @@
 	},
 	"scripts": {
 		"dev": "astro dev",
-		"build": "astro build",
-		"preview": "astro preview",
-		"check": "astro check",
-		"quality:all": "terra-quality quality --all --warn"
+		"build": "pnpm exec terra-quality error-boundaries --all && astro build",
+		"check": "astro check"
 	},
 	"dependencies": {
 		"@astrojs/react": "^6.0.4",
