@@ -1,7 +1,12 @@
+# Dependencies
 node_modules/
+
+# Build and generated output
 .astro/
 .netlify/
 dist/
+
+# Local environment
 .env
 .env.*
 !.env.example
