@@ -1,9 +1,1 @@
-/** @type {import('prettier').Config} */
-export default {
-	arrowParens: 'avoid',
-	jsxSingleQuote: true,
-	printWidth: 200,
-	proseWrap: 'never',
-	singleQuote: true,
-	useTabs: true,
-};
+config/.prettierrc.mjs
