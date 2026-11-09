@@ -2,8 +2,8 @@ packages:
   - config
 lockfileDir: config
 virtualStoreDir: node_modules/.pnpm
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true
 overrides:
   '@astrojs/astro2tsx': 0.1.2
   '@emnapi/runtime': 1.11.3

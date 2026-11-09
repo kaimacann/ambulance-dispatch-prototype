@@ -2,7 +2,14 @@
 	"ignoreExportsUsedInFile": true,
 	"workspaces": {
 		".": {
-			"entry": ["scripts/quality.mjs"]
+			"astro": {
+				"config": "astro.config.mjs",
+				"entry": "src/pages/**/*.astro"
+			},
+			"project": ["src/**/*.{astro,js,jsx,ts,tsx}"]
+		},
+		"config": {
+			"project": ["*.{js,mjs,cjs,ts}", "scripts/*.mjs", "../src/**/*.css"]
 		}
 	}
 }
