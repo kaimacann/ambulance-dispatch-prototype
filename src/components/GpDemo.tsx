@@ -1,64 +1,58 @@
-import { useEffect, useState } from 'react';
-import { EMPTY_PATIENT_DETAILS, INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient, type PatientDetails } from '../lib/patients';
-import { SYMPTOMS, symptomScore } from '../lib/symptoms';
+/**
+ * src/components/GpDemo.tsx
+ */
+
+/*//////////////////////////////////////////////////
+IMPORTS
+//////////////////////////////////////////////////*/
+
+// API
+import { symptomScore } from '../lib/symptoms';
+import { useEffect, useRef, useState } from 'react';
+
+// COMPONENTS
 import { Button, Input, Select, Surface, ToggleButton } from './ui/controls';
 
-/** Renders the interactive GP triage form and its local referral timer demo.
- * @returns The triage interface after client hydration, or `null` during server rendering.
+// DATA
+import { EMPTY_PATIENT_DETAILS, INITIAL_PATIENTS, PATIENTS_STORAGE_KEY } from '../lib/patients';
+import { SYMPTOMS } from '../lib/symptoms';
+
+// TYPES
+import type { Patient, PatientDetails } from '../lib/patients';
+
+/*//////////////////////////////////////////////////
+HELPERS
+//////////////////////////////////////////////////*/
+
+/**
+ * Renders the interactive GP triage form and its local referral timer demo.
+ *
+ * @return The triage interface after client hydration, or `null` during server rendering.
  */
 export default function GpDemo(): React.JSX.Element | null {
 	const [isMounted, setIsMounted] = useState(false);
 	const [selSymptoms, setSelSymptoms] = useState<string[]>([]);
 	const [seconds, setSeconds] = useState(0);
+	const intervalRef = useRef<number | null>(null);
 	const [formData, setFormData] = useState<PatientDetails>(EMPTY_PATIENT_DETAILS);
-
 	useEffect(() => {
 		setIsMounted(true);
 	}, []);
-
 	useEffect(() => {
-		const timer = setInterval(() => {
+		intervalRef.current = window.setInterval(() => {
 			setSeconds(current => current + 1);
 		}, 1000);
-		return () => clearInterval(timer);
+		return () => {
+			if (intervalRef.current !== null) {
+				window.clearInterval(intervalRef.current);
+				intervalRef.current = null;
+			}
+		};
 	}, []);
-
 	const handleFormChange = (key: keyof PatientDetails, value: string) => {
 		setFormData(previous => ({ ...previous, [key]: value }));
 	};
-
-	const toggleSymptom = (id: string) => {
-		setSelSymptoms(previous => (previous.includes(id) ? previous.filter(symptom => symptom !== id) : [...previous, id]));
-	};
-
-	const calcdScore = symptomScore(selSymptoms);
-
-	const savePatient = () => {
-		const patient: Patient = {
-			id: crypto.randomUUID(),
-			firstName: formData.firstName || 'Unknown',
-			lastName: formData.lastName || 'Patient',
-			score: calcdScore,
-			eta: '6-8',
-			status: 'pending',
-			timeSeconds: seconds,
-		};
-		try {
-			const existing = window.localStorage.getItem(PATIENTS_STORAGE_KEY);
-			const patients = existing ? (JSON.parse(existing) as Patient[]) : INITIAL_PATIENTS;
-			window.localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify([...patients, patient]));
-		} catch {
-			// Keep the visible demo confirmation available if browser storage is disabled.
-		}
-	};
-
 	if (!isMounted) return null;
-
-	const handleGpReferral = () => {
-		savePatient();
-		alert('Patient information transferred to Emergency Dispatch.');
-	};
-
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col'>
 			<Surface variant='secondary-tonal' className='mb-6 flex items-start gap-3 rounded-lg p-4'>
@@ -108,23 +102,55 @@ export default function GpDemo(): React.JSX.Element | null {
 							<Input id='field-age' type='number' placeholder='52' value={formData.age} onChange={event => handleFormChange('age', event.currentTarget.value)} />
 						</div>
 					</div>
-
 					<div className='space-y-3 pt-2'>
 						<p className='text-sm font-medium text-current/80'>Reported Symptoms (Select 1 or more)</p>
 						<div className='grid grid-cols-2 gap-2 sm:grid-cols-3'>
 							{SYMPTOMS.map(symptom => {
-								const selected = selSymptoms.includes(symptom.id);
 								return (
-									<ToggleButton key={symptom.id} aria-pressed={selected} onClick={() => toggleSymptom(symptom.id)} variant='primary-tonal' size='sm' className='w-full flex-col items-start space-y-1'>
+									<ToggleButton
+										key={symptom.id}
+										aria-pressed={selSymptoms.includes(symptom.id)}
+										onClick={() =>
+											((id: string) => {
+												setSelSymptoms(previous => (previous.includes(id) ? previous.filter(symptom => symptom !== id) : [...previous, id]));
+											})(symptom.id)
+										}
+										variant='primary-tonal'
+										size='sm'
+										className='w-full flex-col items-start space-y-1'
+									>
 										<span className='font-medium'>{symptom.gpLabel}</span>
 									</ToggleButton>
 								);
 							})}
 						</div>
 					</div>
-
 					<div className='pt-2'>
-						<Button onClick={handleGpReferral} variant='destructive' size='lg' className='w-full'>
+						<Button
+							onClick={() => {
+								(() => {
+									const patient: Patient = {
+										id: crypto.randomUUID(),
+										firstName: formData.firstName || 'Unknown',
+										lastName: formData.lastName || 'Patient',
+										score: symptomScore(selSymptoms),
+										eta: '6-8',
+										status: 'pending',
+										timeSeconds: seconds,
+									};
+									try {
+										const existing = window.localStorage.getItem(PATIENTS_STORAGE_KEY);
+										window.localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify([...(existing ? (JSON.parse(existing) as Patient[]) : INITIAL_PATIENTS), patient]));
+									} catch {
+										// Keep the visible demo confirmation available if browser storage is disabled.
+									}
+								})();
+								alert('Patient information transferred to Emergency Dispatch.');
+							}}
+							variant='destructive'
+							size='lg'
+							className='w-full'
+						>
 							Refer to Ambulance Dispatch
 						</Button>
 					</div>

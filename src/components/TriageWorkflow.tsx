@@ -1,14 +1,39 @@
-import { useEffect, useState } from 'react';
-import { EMPTY_PATIENT_DETAILS, INITIAL_PATIENTS, PATIENTS_STORAGE_KEY, type Patient, type PatientDetails } from '../lib/patients';
-import { SYMPTOMS, symptomScore } from '../lib/symptoms';
+/**
+ * src/components/TriageWorkflow.tsx
+ */
+
+/*//////////////////////////////////////////////////
+IMPORTS
+//////////////////////////////////////////////////*/
+
+// API
+import { symptomScore } from '../lib/symptoms';
+import { useEffect, useRef, useState } from 'react';
+
+// COMPONENTS
 import { Button, Input, Select, Surface, Textarea, ToggleButton } from './ui/controls';
 
-/** Selects the nurse intake view or ambulance dispatch queue. */
-type Props = { mode: 'nurse' | 'ambulance' };
+// DATA
+import { EMPTY_PATIENT_DETAILS, INITIAL_PATIENTS, PATIENTS_STORAGE_KEY } from '../lib/patients';
+import { SYMPTOMS } from '../lib/symptoms';
+
+// TYPES
+import type { Patient, PatientDetails } from '../lib/patients';
+
+/*//////////////////////////////////////////////////
+CONFIG
+//////////////////////////////////////////////////*/
+
 const panelClass = 'rounded-xl p-5 shadow-sm';
 
-/** Loads saved assessments, falling back to the fixture queue when storage is unavailable or empty.
- * @returns Stored patients, or the initial fixture patients when none are saved.
+/*//////////////////////////////////////////////////
+HELPERS
+//////////////////////////////////////////////////*/
+
+/**
+ * Loads saved assessments, falling back to the fixture queue when storage is unavailable or empty.
+ *
+ * @return Stored patients, or the initial fixture patients when none are saved.
  */
 function readPatients(): Patient[] {
 	try {
@@ -19,28 +44,36 @@ function readPatients(): Patient[] {
 	}
 }
 
-/** Saves the simulated dispatch queue when browser storage is available.
- * @param patients - Current patient queue to serialize into browser storage.
+/**
+ * Saves the simulated dispatch queue when browser storage is available.
+ *
+ * @param p - Current patient queue to serialize into browser storage.
  */
-function writePatients(patients: Patient[]): void {
+function writePatients(p: Patient[]): void {
 	try {
-		window.localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify(patients));
+		window.localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify(p));
 	} catch {
 		// Keep the demo usable when browser storage is unavailable.
 	}
 }
 
-/** Formats elapsed time as `MM:SS`.
+/**
+ * Formats elapsed time as `MM:SS`.
+ *
  * @param seconds - Elapsed duration in whole seconds.
- * @returns The duration formatted with two-digit minutes and seconds.
+ *
+ * @return The duration formatted with two-digit minutes and seconds.
  */
 function timeLabel(seconds: number): string {
 	return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
-/** Maps the triage score to the dispatch priority label.
+/**
+ * Maps the triage score to the dispatch priority label.
+ *
  * @param score - Numeric triage score produced from selected symptoms.
- * @returns Critical, medium, or low priority for the dispatch queue.
+ *
+ * @return Critical, medium, or low priority for the dispatch queue.
  */
 function priority(score: number): 'Critical' | 'Medium' | 'Low' {
 	return score >= 75 ? 'Critical' : score >= 40 ? 'Medium' : 'Low';
@@ -51,39 +84,36 @@ function priority(score: number): 'Critical' | 'Medium' | 'Low' {
  *
  * @param props - Workflow mode that determines which role-specific interface is displayed.
  * @param mode - Selects nurse intake or ambulance dispatch.
- * @returns The selected workflow after client state is mounted, or null during initial hydration.
+ *
+ * @return The selected workflow after client state is mounted, or null during initial hydration.
  */
-export default function TriageWorkflow({ mode }: Props): React.JSX.Element | null {
+export default function TriageWorkflow({ mode }: /** Selects the nurse intake view or ambulance dispatch queue. */ { mode: 'nurse' | 'ambulance' }): React.JSX.Element | null {
 	const [mounted, setMounted] = useState(false);
 	const [intake, setIntake] = useState<PatientDetails>(EMPTY_PATIENT_DETAILS);
 	const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
 	const [seconds, setSeconds] = useState(0);
+	const intervalRef = useRef<number | null>(null);
 	const [step, setStep] = useState<'intake' | 'result'>('intake');
 	const [patients, setPatients] = useState<Patient[]>([]);
 	const [selectedId, setSelectedId] = useState('');
 	const score = symptomScore(selectedSymptoms);
-
 	useEffect(() => {
 		setMounted(true);
 		setPatients(readPatients());
 	}, []);
-
 	useEffect(() => {
 		if (mode === 'ambulance') return;
-		const timer = window.setInterval(() => setSeconds(value => value + 1), 1000);
-		return () => window.clearInterval(timer);
-	}, [mode]);
-
-	const selectedPatient = patients.find(patient => patient.id === selectedId);
-
-	if (!mounted) return null;
-
-	if (mode === 'ambulance') {
-		const dispatch = (patient: Patient) => {
-			const updated = patients.map(item => (item.id === patient.id ? { ...item, status: 'dispatched' as const } : item));
-			setPatients(updated);
-			writePatients(updated);
+		intervalRef.current = window.setInterval(() => setSeconds(value => value + 1), 1000);
+		return () => {
+			if (intervalRef.current !== null) {
+				window.clearInterval(intervalRef.current);
+				intervalRef.current = null;
+			}
 		};
+	}, [mode]);
+	const selectedPatient = patients.find(patient => patient.id === selectedId);
+	if (!mounted) return null;
+	if (mode === 'ambulance') {
 		return (
 			<div className='mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(18rem,0.8fr)_minmax(0,1.5fr)]'>
 				<Surface as='section' className={`${panelClass} flex min-h-[32rem] flex-col`} aria-labelledby='queue-heading'>
@@ -113,7 +143,14 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 				</Surface>
 				<Surface as='section' className={`${panelClass} flex min-h-[32rem] flex-col`} aria-live='polite'>
 					{selectedPatient ? (
-						<DispatchDetails patient={selectedPatient} onDispatch={dispatch} />
+						<DispatchDetails
+							patient={selectedPatient}
+							onDispatch={(patient: Patient) => {
+								const updated = patients.map(item => (item.id === patient.id ? { ...item, status: 'dispatched' as const } : item));
+								setPatients(updated);
+								writePatients(updated);
+							}}
+						/>
 					) : (
 						<div className='m-auto max-w-sm text-center text-primary-9'>
 							<span className='mb-3 block text-3xl' aria-hidden='true'>
@@ -126,7 +163,6 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 			</div>
 		);
 	}
-
 	const progress = [
 		{ label: 'Incident', value: intake.phone ? 100 : 0 },
 		{ label: 'Location', value: intake.location ? 100 : 0 },
@@ -134,18 +170,6 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 		{ label: 'Medical', value: selectedSymptoms.length ? 100 : 0 },
 	];
 	const action = score >= 75 ? 'Dispatch Ambulance' : score >= 40 ? 'See GP' : 'All Fine';
-	const finish = () => {
-		const patient: Patient = { id: crypto.randomUUID(), firstName: intake.firstName || 'Unknown', lastName: intake.lastName || 'Patient', score, eta: '6-8', status: 'pending', timeSeconds: seconds };
-		const updated = [...patients, patient];
-		setPatients(updated);
-		writePatients(updated);
-		setStep('intake');
-		setIntake(EMPTY_PATIENT_DETAILS);
-		setSelectedSymptoms([]);
-		setSeconds(0);
-		window.alert('Patient added to the ambulance dispatch queue.');
-	};
-
 	return (
 		<div className='mx-auto w-full max-w-6xl'>
 			{step === 'intake' ? (
@@ -297,7 +321,28 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
 						<Button variant='primary-outline' size='sm' onClick={() => setStep('intake')}>
 							← Back to assessment
 						</Button>
-						<Button size='sm' onClick={finish}>
+						<Button
+							size='sm'
+							onClick={() => {
+								const patient: Patient = {
+									id: crypto.randomUUID(),
+									firstName: intake.firstName || 'Unknown',
+									lastName: intake.lastName || 'Patient',
+									score,
+									eta: '6-8',
+									status: 'pending',
+									timeSeconds: seconds,
+								};
+								const updated = [...patients, patient];
+								setPatients(updated);
+								writePatients(updated);
+								setStep('intake');
+								setIntake(EMPTY_PATIENT_DETAILS);
+								setSelectedSymptoms([]);
+								setSeconds(0);
+								window.alert('Patient added to the ambulance dispatch queue.');
+							}}
+						>
 							Add to dispatch queue
 						</Button>
 					</div>
@@ -312,7 +357,8 @@ export default function TriageWorkflow({ mode }: Props): React.JSX.Element | nul
  *
  * @param props - Assessment score displayed by the gauge.
  * @param score - Severity score on the 0–100 scale.
- * @returns An accessible visual gauge for the assessment score.
+ *
+ * @return An accessible visual gauge for the assessment score.
  */
 function ScoreGauge({ score }: { score: number }): React.JSX.Element {
 	return (
@@ -335,7 +381,8 @@ function ScoreGauge({ score }: { score: number }): React.JSX.Element {
  * @param props - Selected queue record and the callback that changes its dispatch status.
  * @param patient - Assessment record currently selected in the ambulance queue.
  * @param onDispatch - Marks the selected patient as dispatched when the action is available.
- * @returns Dispatch details and the status-aware action button for the selected request.
+ *
+ * @return Dispatch details and the status-aware action button for the selected request.
  */
 function DispatchDetails({ patient, onDispatch }: { patient: Patient; onDispatch: (patient: Patient) => void }): React.JSX.Element {
 	const level = priority(patient.score);

@@ -1,15 +1,28 @@
 {
-  "name": "ambulance-dispatch-prototype-config-adapter",
-  "private": true,
-  "packageManager": "pnpm@10.30.3",
-  "scripts": {
-    "dev": "pnpm --dir config run dev",
-    "build": "pnpm --dir config run build",
-    "check": "pnpm --dir config run check",
-    "quality": "pnpm --dir config run quality",
-    "quality:all": "pnpm --dir config run quality:all",
-    "format:check": "pnpm --dir config run format:check",
-    "lint": "pnpm --dir config run lint",
-    "knip": "pnpm --dir config run knip"
-  }
+	"name": "ambulance-dispatch-prototype-config-adapter",
+	"private": true,
+	"packageManager": "pnpm@10.30.3",
+	"scripts": {
+		"dev": "pnpm --dir config run dev",
+		"build": "pnpm --dir config run build",
+		"check": "astro check --config astro.config.mjs --tsconfig config/tsconfig.json",
+		"quality": "pnpm --dir config run quality",
+		"quality:all": "pnpm --dir config run quality:all",
+		"format:check": "pnpm --dir config run format:check",
+		"lint": "pnpm --dir config run lint",
+		"knip": "pnpm --dir config run knip"
+	},
+	"devDependencies": {
+		"@astrojs/check": "^0.9.12",
+		"@terra-symposium/quality": "0.4.41",
+		"@types/react": "^19.2.18",
+		"astro": "^7.4.7",
+		"typescript": "^5.9.3",
+		"@types/react-dom": "^19.2.18"
+	},
+	"dependencies": {
+		"react": "19.2.7",
+		"@astrojs/react": "^6.0.4",
+		"react-dom": "19.2.7"
+	}
 }

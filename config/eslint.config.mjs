@@ -18,5 +18,5 @@ export default [
 		plugins: { '@typescript-eslint': tsPlugin },
 		rules: { ...tsPlugin.configs.recommended.rules, 'no-undef': 'off' },
 	},
-	{ files: ['**/*.astro'], languageOptions: { globals: { ...globals.browser, ...globals.node } } },
+	{ files: ['**/*.astro'], languageOptions: { parserOptions: { parser: tsParser }, globals: { ...globals.browser, ...globals.node } } },
 ];
