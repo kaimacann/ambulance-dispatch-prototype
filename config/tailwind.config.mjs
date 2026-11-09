@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 const palette = Object.fromEntries(
 	Array.from({ length: 12 }, (_, index) => {
 		const step = index + 1;
@@ -6,7 +8,7 @@ const palette = Object.fromEntries(
 );
 
 export default {
-	content: ['./src/**/*.{astro,html,js,jsx,ts,tsx}'],
+	content: [`${fileURLToPath(new URL('../src/', import.meta.url))}**/*.{astro,html,js,jsx,ts,tsx}`],
 	theme: {
 		extend: {
 			colors: {

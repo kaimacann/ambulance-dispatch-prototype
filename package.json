@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "pnpm --dir config run dev",
 		"build": "pnpm --dir config run build",
-		"check": "pnpm --dir config run check",
+		"check": "astro check --config config/astro.config.mjs --tsconfig config/tsconfig.json",
 		"quality": "pnpm --dir config run quality",
 		"quality:all": "pnpm --dir config run quality:all",
 		"format:check": "pnpm --dir config run format:check",
@@ -16,6 +16,9 @@
 		"react": "19.2.7"
 	},
 	"devDependencies": {
-		"@types/react": "^19.2.18"
+		"@astrojs/check": "^0.9.4",
+		"@types/react": "^19.2.18",
+		"astro": "^7.2.8",
+		"typescript": "^5.9.3"
 	}
 }
