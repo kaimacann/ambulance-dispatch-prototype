@@ -2,5 +2,5 @@ packages:
   - config
 lockfileDir: config
 virtualStoreDir: node_modules/.pnpm
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true
