@@ -17,12 +17,14 @@
 		"@terra-symposium/quality": "0.4.41",
 		"@types/react": "^19.2.18",
 		"astro": "^7.4.7",
-		"typescript": "^5.9.3",
-		"@types/react-dom": "^19.2.18"
+		"typescript": "^5.9.3"
 	},
 	"dependencies": {
-		"react": "19.2.7",
 		"@astrojs/react": "^6.0.4",
+		"react": "19.2.7"
+	},
+	"peerDependencies": {
+		"@types/react-dom": "^19.3.0",
 		"react-dom": "19.2.7"
 	}
 }
