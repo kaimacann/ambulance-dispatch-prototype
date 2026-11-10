@@ -9,10 +9,10 @@
 	},
 	"scripts": {
 		"dev": "cd .. && pnpm exec astro dev --config astro.config.mjs",
-		"build": "cd .. && node config/scripts/quality.mjs error-boundaries --all && pnpm exec astro build --config astro.config.mjs",
+		"build": "cd .. && pnpm exec astro build --config astro.config.mjs",
 		"check": "cd .. && pnpm run check",
-		"quality": "node scripts/quality.mjs quality",
-		"quality:all": "node scripts/quality.mjs quality --all",
+		"quality": "node scripts/quality.mjs error-boundaries --all && node scripts/quality.mjs quality",
+		"quality:all": "node scripts/quality.mjs error-boundaries --all && node scripts/quality.mjs quality --all",
 		"format:check": "cd .. && prettier --check . --config config/.prettierrc.mjs --ignore-path .gitignore --ignore-path config/.prettierignore",
 		"lint": "cd .. && eslint . --config config/eslint.config.mjs",
 		"knip": "cd .. && knip --config config/knip.json"
