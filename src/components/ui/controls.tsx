@@ -3,7 +3,7 @@ import React from 'react';
 /** Palette names supported by shared interface controls. */
 export type UiColor = 'primary' | 'secondary' | 'gray' | 'destructive';
 /** Visual treatments available to shared interface controls. */
-export type UiType = 'default' | 'outline' | 'ghost' | 'tonal' | 'saturated' | 'link' | 'underline';
+export type UiType = 'default' | 'outline' | 'ghost' | 'tonal' | 'saturated' | 'underline';
 /** Preset control dimensions from extra small through extra large. */
 export type UiSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -12,14 +12,14 @@ export type ActionVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 
 /** Variants available to form and toggle controls. */
 export type ControlVariant = UiColor | `${UiColor}-${Extract<UiType, 'outline' | 'ghost' | 'tonal'>}`;
 /** Variants available to semantic surface containers. */
-export type SurfaceVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'link' | 'underline'>}`;
+export type SurfaceVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'underline'>}`;
 
 /** Treatments usable by action buttons. */
 type ActionTreatment = Exclude<UiType, 'saturated'>;
 /** Treatments usable by form and toggle controls. */
 type ControlTreatment = Extract<UiType, 'default' | 'outline' | 'ghost' | 'tonal'>;
 /** Treatments usable by surface containers. */
-type SurfaceTreatment = Exclude<UiType, 'link' | 'underline'>;
+type SurfaceTreatment = Exclude<UiType, 'underline'>;
 
 export const ACTION_VARIANTS = {
 	primary: {
@@ -27,7 +27,6 @@ export const ACTION_VARIANTS = {
 		outline: 'border border-primary-6 bg-transparent text-primary-10 hover:bg-primary-2 focus-visible:ring-primary-9',
 		ghost: 'border border-transparent bg-transparent text-primary-10 hover:bg-primary-2 focus-visible:ring-primary-9',
 		tonal: 'border border-primary-3 bg-primary-2 text-primary-12 hover:bg-primary-3 focus-visible:ring-primary-9',
-		link: 'min-h-0 border-0 bg-transparent px-0 py-0 text-primary-9 underline-offset-4 hover:underline focus-visible:ring-primary-9',
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-primary-9 underline focus-visible:ring-primary-9',
 	},
 	secondary: {
@@ -35,7 +34,6 @@ export const ACTION_VARIANTS = {
 		outline: 'border border-blue-300 bg-transparent text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-600',
 		ghost: 'border border-transparent bg-transparent text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-600',
 		tonal: 'border border-blue-100 bg-blue-50 text-blue-800 hover:bg-blue-100 focus-visible:ring-blue-600',
-		link: 'min-h-0 border-0 bg-transparent px-0 py-0 text-blue-700 underline-offset-4 hover:underline focus-visible:ring-blue-600',
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-blue-700 underline focus-visible:ring-blue-600',
 	},
 	gray: {
@@ -43,7 +41,6 @@ export const ACTION_VARIANTS = {
 		outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-700',
 		ghost: 'border border-transparent bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-700',
 		tonal: 'border border-gray-200 bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-700',
-		link: 'min-h-0 border-0 bg-transparent px-0 py-0 text-gray-700 underline-offset-4 hover:underline focus-visible:ring-gray-700',
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-gray-700 underline focus-visible:ring-gray-700',
 	},
 	destructive: {
@@ -51,7 +48,6 @@ export const ACTION_VARIANTS = {
 		outline: 'border border-rose-300 bg-transparent text-rose-700 hover:bg-rose-50 focus-visible:ring-rose-600',
 		ghost: 'border border-transparent bg-transparent text-rose-700 hover:bg-rose-50 focus-visible:ring-rose-600',
 		tonal: 'border border-rose-100 bg-rose-50 text-rose-800 hover:bg-rose-100 focus-visible:ring-rose-600',
-		link: 'min-h-0 border-0 bg-transparent px-0 py-0 text-rose-700 underline-offset-4 hover:underline focus-visible:ring-rose-600',
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-rose-700 underline focus-visible:ring-rose-600',
 	},
 } satisfies Record<UiColor, Record<ActionTreatment, string>>;
