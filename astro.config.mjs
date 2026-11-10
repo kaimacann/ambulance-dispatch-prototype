@@ -6,5 +6,5 @@ export default defineConfig({
 	server: { port: 3000, strictPort: true },
 	output: 'static',
 	integrations: [react()],
-	vite: { css: { postcss: fileURLToPath(new URL('./', import.meta.url)) } },
+	vite: { css: { postcss: fileURLToPath(new URL('./config/', import.meta.url)) } },
 });

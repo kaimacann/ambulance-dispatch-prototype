@@ -1,5 +1,15 @@
 {
 	"ignoreExportsUsedInFile": true,
-	"ignoreDependencies": ["autoprefixer", "postcss", "tailwindcss"],
-	"entry": ["config/astro.config.mjs", "config/tailwind.config.mjs", "src/pages/**/*.astro", "config/**/*.{js,mjs,cjs,ts}"]
+	"workspaces": {
+		".": {
+			"astro": {
+				"config": "astro.config.mjs",
+				"entry": "src/pages/**/*.astro"
+			},
+			"project": ["src/**/*.{astro,js,jsx,ts,tsx}"]
+		},
+		"config": {
+			"project": ["*.{js,mjs,cjs,ts}", "scripts/*.mjs", "../src/**/*.css"]
+		}
+	}
 }
