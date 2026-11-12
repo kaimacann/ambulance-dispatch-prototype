@@ -13,6 +13,7 @@
 		"check": "cd .. && pnpm run check",
 		"quality": "node scripts/quality.mjs error-boundaries --all && node scripts/quality.mjs quality",
 		"quality:all": "node scripts/quality.mjs error-boundaries --all && node scripts/quality.mjs quality --all",
+		"test": "cd .. && node --test tests/*.test.mjs",
 		"format:check": "cd .. && prettier --check . --config config/.prettierrc.mjs --ignore-path .gitignore --ignore-path config/.prettierignore",
 		"lint": "cd .. && eslint . --config config/eslint.config.mjs",
 		"knip": "cd .. && knip --config config/knip.json"

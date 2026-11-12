@@ -1,5 +1,4 @@
 {
-	"ignoreExportsUsedInFile": true,
 	"workspaces": {
 		".": {
 			"astro": {

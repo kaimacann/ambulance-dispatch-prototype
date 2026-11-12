@@ -14,11 +14,13 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Select, Surface, ToggleButton } from './ui/controls';
 
 // DATA
-import { EMPTY_PATIENT_DETAILS, INITIAL_PATIENTS, PATIENTS_STORAGE_KEY } from '../lib/patients';
+import { clearLegacyPatientQueue, createPatientRecord, EMPTY_PATIENT_DETAILS, persistPatient } from '../lib/patients';
 import { SYMPTOMS } from '../lib/symptoms';
 
 // TYPES
 import type { Patient, PatientDetails } from '../lib/patients';
+const GRID_GAP_1_CLASS = 'grid gap-1';
+const TEXT_SM_FONT_MEDIUM_LEADING_NONE_TEXT_PRIMARY_11_CLASS = 'text-sm font-medium leading-none text-primary-11';
 
 /*//////////////////////////////////////////////////
 HELPERS
@@ -35,23 +37,120 @@ export default function GpDemo(): React.JSX.Element | null {
 	const [seconds, setSeconds] = useState(0);
 	const intervalRef = useRef<number | null>(null);
 	const [formData, setFormData] = useState<PatientDetails>(EMPTY_PATIENT_DETAILS);
-	useEffect(() => {
+	/** Clears legacy local queue data and enables the hydrated form. */
+	function mountDemo(): void {
+		clearLegacyPatientQueue(() => window.localStorage);
 		setIsMounted(true);
-	}, []);
-	useEffect(() => {
-		intervalRef.current = window.setInterval(() => {
-			setSeconds(current => current + 1);
-		}, 1000);
-		return () => {
-			if (intervalRef.current !== null) {
-				window.clearInterval(intervalRef.current);
-				intervalRef.current = null;
-			}
-		};
-	}, []);
-	const handleFormChange = (key: keyof PatientDetails, value: string) => {
-		setFormData(previous => ({ ...previous, [key]: value }));
-	};
+	}
+	/** Advances the referral timer's functional state by one second.
+	 * @param current - Elapsed seconds before this timer tick.
+	 * @returns Elapsed seconds after the tick.
+	 */
+	function incrementSeconds(current: number): number {
+		return current + 1;
+	}
+	/** Queues one elapsed-second update for the referral timer. */
+	function advanceReferralTimer(): void {
+		setSeconds(incrementSeconds);
+	}
+	/** Stops the referral timer and clears its stored interval id. */
+	function clearReferralTimer(): void {
+		if (intervalRef.current !== null) {
+			window.clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		}
+	}
+	/** Starts the referral timer and returns its effect cleanup callback.
+	 * @returns A callback that stops the timer when the demo unmounts.
+	 */
+	function startReferralTimer(): () => void {
+		intervalRef.current = window.setInterval(advanceReferralTimer, 1000);
+		return clearReferralTimer;
+	}
+	useEffect(mountDemo, []);
+	useEffect(startReferralTimer, []);
+	/**
+	 * Update one patient detail while keeping the other form values intact.
+	 *
+	 * @param key - Field in the intake form to update.
+	 * @param value - New text value for that field.
+	 */
+	function handleFormChange(key: keyof PatientDetails, value: string): void {
+		/** Merges the selected intake field into the latest form state.
+		 * @param previous - Form values before this field update.
+		 * @returns Form values with the selected field replaced.
+		 */
+		function mergeChangedField(previous: PatientDetails): PatientDetails {
+			return { ...previous, [key]: value };
+		}
+		setFormData(mergeChangedField);
+	}
+	/** Applies the changed value from an intake input or select.
+	 * @param e - Form control event whose name and value identify the field update.
+	 */
+	function handleFormFieldChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void {
+		handleFormChange(e.currentTarget.name as keyof PatientDetails, e.currentTarget.value);
+	}
+	/** Toggles the symptom identified by the clicked button.
+	 * @param e - Click event carrying the symptom id in its data attribute.
+	 */
+	function handleSymptomSelection(e: React.MouseEvent<HTMLButtonElement>): void {
+		const id = e.currentTarget.dataset.symptomId;
+		if (typeof id !== 'string' || !id) return;
+		const nSelection = new Set(selSymptoms);
+		if (nSelection.has(id)) nSelection.delete(id);
+		else nSelection.add(id);
+		setSelSymptoms([...nSelection]);
+	}
+	/** Renders one catalog symptom as a pressed-state toggle.
+	 * @param s - Symptom definition providing the GP label and stable id.
+	 * @returns The accessible toggle button for this symptom.
+	 */
+	function renderSymptomButton(s: (typeof SYMPTOMS)[number]): React.JSX.Element {
+		return (
+			<ToggleButton
+				key={s.id}
+				data-symptom-id={s.id}
+				aria-pressed={selSymptoms.includes(s.id)}
+				onClick={handleSymptomSelection}
+				variant='primary-tonal'
+				size='sm'
+				className='w-full flex-col items-start space-y-1'
+			>
+				<span className='font-medium'>{s.gpLabel}</span>
+			</ToggleButton>
+		);
+	}
+	/** Builds a patient record, stores it for dispatch, and reports the transfer result. */
+	function transferPatient(): void {
+		const patient: Patient = createPatientRecord(crypto.randomUUID(), formData, symptomScore(selSymptoms), seconds);
+		const persisted = persistPatient(() => window.sessionStorage, patient);
+		alert(persisted ? 'Patient information transferred to Emergency Dispatch.' : 'Patient information could not be transferred. Please try again.');
+	}
+	const patientFields = [
+		['First Name', 'firstName', 'text', 'Jane'],
+		['Last Name', 'lastName', 'text', 'Doe'],
+		['Phone Number', 'phone', 'tel', '(555) 123-4567'],
+		['Location', 'location', 'text', '123 Main St'],
+	] as const;
+
+	/** Renders a labeled input from one configured patient field.
+	 * @param d - Visible label for the intake property.
+	 * @param f - Property key whose patient value the input edits.
+	 * @param v - HTML input type for the property.
+	 * @param r - Example placeholder shown when the value is empty.
+	 * @returns The labeled input bound to the matching form value.
+	 */
+	function renderPatientField([d, f, v, r]: (typeof patientFields)[number]): React.JSX.Element {
+		return (
+			<div key={f} className={GRID_GAP_1_CLASS}>
+				<label className={TEXT_SM_FONT_MEDIUM_LEADING_NONE_TEXT_PRIMARY_11_CLASS} htmlFor={`field-${f}`}>
+					{d}
+				</label>
+				<Input id={`field-${f}`} name={f} type={v} placeholder={r} value={formData[f]} onChange={handleFormFieldChange} />
+			</div>
+		);
+	}
 	if (!isMounted) return null;
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col'>
@@ -68,26 +167,12 @@ export default function GpDemo(): React.JSX.Element | null {
 				</div>
 				<div className='space-y-8 p-6 text-base'>
 					<div className='grid grid-cols-2 gap-2'>
-						{(
-							[
-								['First Name', 'firstName', 'text', 'Jane'],
-								['Last Name', 'lastName', 'text', 'Doe'],
-								['Phone Number', 'phone', 'tel', '(555) 123-4567'],
-								['Location', 'location', 'text', '123 Main St'],
-							] as const
-						).map(([description, fieldKey, fieldType, fieldPlaceholder]) => (
-							<div key={fieldKey} className='grid gap-1'>
-								<label className='text-sm font-medium leading-none text-primary-11' htmlFor={`field-${fieldKey}`}>
-									{description}
-								</label>
-								<Input id={`field-${fieldKey}`} type={fieldType} placeholder={fieldPlaceholder} value={formData[fieldKey]} onChange={event => handleFormChange(fieldKey, event.currentTarget.value)} />
-							</div>
-						))}
-						<div className='grid gap-1'>
-							<label className='text-sm font-medium leading-none text-primary-11' htmlFor='field-gender'>
+						{patientFields.map(renderPatientField)}
+						<div className={GRID_GAP_1_CLASS}>
+							<label className={TEXT_SM_FONT_MEDIUM_LEADING_NONE_TEXT_PRIMARY_11_CLASS} htmlFor='field-gender'>
 								Gender
 							</label>
-							<Select id='field-gender' value={formData.gender} onChange={event => handleFormChange('gender', event.currentTarget.value)}>
+							<Select id='field-gender' name='gender' value={formData.gender} onChange={handleFormFieldChange}>
 								<option value=''>Select...</option>
 								<option value='Male'>Male</option>
 								<option value='Female'>Female</option>
@@ -95,62 +180,19 @@ export default function GpDemo(): React.JSX.Element | null {
 								<option value='Prefer not to specify'>Prefer not to specify</option>
 							</Select>
 						</div>
-						<div className='grid gap-1'>
-							<label className='text-sm font-medium leading-none text-primary-11' htmlFor='field-age'>
+						<div className={GRID_GAP_1_CLASS}>
+							<label className={TEXT_SM_FONT_MEDIUM_LEADING_NONE_TEXT_PRIMARY_11_CLASS} htmlFor='field-age'>
 								Age
 							</label>
-							<Input id='field-age' type='number' placeholder='52' value={formData.age} onChange={event => handleFormChange('age', event.currentTarget.value)} />
+							<Input id='field-age' name='age' type='number' placeholder='52' value={formData.age} onChange={handleFormFieldChange} />
 						</div>
 					</div>
 					<div className='space-y-3 pt-2'>
 						<p className='text-sm font-medium text-current/80'>Reported Symptoms (Select 1 or more)</p>
-						<div className='grid grid-cols-2 gap-2 sm:grid-cols-3'>
-							{SYMPTOMS.map(symptom => {
-								return (
-									<ToggleButton
-										key={symptom.id}
-										aria-pressed={selSymptoms.includes(symptom.id)}
-										onClick={() =>
-											((id: string) => {
-												setSelSymptoms(previous => (previous.includes(id) ? previous.filter(symptom => symptom !== id) : [...previous, id]));
-											})(symptom.id)
-										}
-										variant='primary-tonal'
-										size='sm'
-										className='w-full flex-col items-start space-y-1'
-									>
-										<span className='font-medium'>{symptom.gpLabel}</span>
-									</ToggleButton>
-								);
-							})}
-						</div>
+						<div className='grid grid-cols-2 gap-2 sm:grid-cols-3'>{SYMPTOMS.map(renderSymptomButton)}</div>
 					</div>
 					<div className='pt-2'>
-						<Button
-							onClick={() => {
-								(() => {
-									const patient: Patient = {
-										id: crypto.randomUUID(),
-										firstName: formData.firstName || 'Unknown',
-										lastName: formData.lastName || 'Patient',
-										score: symptomScore(selSymptoms),
-										eta: '6-8',
-										status: 'pending',
-										timeSeconds: seconds,
-									};
-									try {
-										const existing = window.localStorage.getItem(PATIENTS_STORAGE_KEY);
-										window.localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify([...(existing ? (JSON.parse(existing) as Patient[]) : INITIAL_PATIENTS), patient]));
-									} catch {
-										// Keep the visible demo confirmation available if browser storage is disabled.
-									}
-								})();
-								alert('Patient information transferred to Emergency Dispatch.');
-							}}
-							variant='destructive'
-							size='lg'
-							className='w-full'
-						>
+						<Button onClick={transferPatient} variant='destructive' size='lg' className='w-full'>
 							Refer to Ambulance Dispatch
 						</Button>
 					</div>

@@ -1,6 +1,16 @@
 #!/usr/bin/env node
-import { runQualityFromCfg } from '@terra-symposium/quality/cli';
+
+/*//////////////////////////////////////////////////
+IMPORTS
+//////////////////////////////////////////////////*/
+
+// API
 import { fileURLToPath } from 'node:url';
+import { runQualityFromCfg } from '@terra-symposium/standards-quality/cli';
+
+/*//////////////////////////////////////////////////
+CONFIG
+//////////////////////////////////////////////////*/
 
 const config = fileURLToPath(new URL('../quality.json', import.meta.url));
-runQualityFromCfg(config, process.argv.slice(2));
+await runQualityFromCfg(config, process.argv.slice(2));

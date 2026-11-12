@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "pnpm --dir config run dev",
 		"build": "pnpm --dir config run build",
+		"test": "pnpm --dir config run test",
 		"check": "astro check --config astro.config.mjs --tsconfig config/tsconfig.json",
 		"quality": "pnpm --dir config run quality",
 		"quality:all": "pnpm --dir config run quality:all",
@@ -14,7 +15,7 @@
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.12",
-		"@terra-symposium/quality": "0.4.41",
+		"@terra-symposium/standards-quality": "2.2.0",
 		"@types/react": "^19.2.18",
 		"astro": "^7.4.7",
 		"typescript": "^5.9.3"
