@@ -14,30 +14,31 @@ CONFIG
 //////////////////////////////////////////////////*/
 
 /** Palette names supported by shared interface controls. */
-export type UiColor = 'primary' | 'secondary' | 'gray' | 'destructive';
+type UiColor = 'primary' | 'secondary' | 'gray' | 'destructive';
 /** Visual treatments available to shared interface controls. */
-export type UiType = 'default' | 'outline' | 'ghost' | 'tonal' | 'saturated' | 'link' | 'underline';
+type UiType = 'default' | 'outline' | 'ghost' | 'tonal' | 'saturated' | 'underline';
 /** Preset control dimensions from extra small through extra large. */
 export type UiSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 /** Variants available to action buttons. */
 export type ActionVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'saturated'>}`;
 /** Variants available to form and toggle controls. */
-export type ControlVariant = UiColor | `${UiColor}-${Extract<UiType, 'outline' | 'ghost' | 'tonal'>}`;
+type ControlVariant = UiColor | `${UiColor}-${Extract<UiType, 'outline' | 'ghost' | 'tonal'>}`;
+// terra-quality-ignore single-use -- Exported variant type is part of the shared controls API.
 /** Variants available to semantic surface containers. */
-export type SurfaceVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'link' | 'underline'>}`;
+export type SurfaceVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'underline'>}`;
 /** Treatments usable by action buttons. */
 type ActionTreatment = Exclude<UiType, 'saturated'>;
 /** Treatments usable by form and toggle controls. */
 type ControlTreatment = Extract<UiType, 'default' | 'outline' | 'ghost' | 'tonal'>;
 /** Treatments usable by surface containers. */
-type SurfaceTreatment = Exclude<UiType, 'link' | 'underline'>;
-export const ACTION_VARIANTS = {
+type SurfaceTreatment = Exclude<UiType, 'underline'>;
+// terra-quality-ignore single-use -- Initialize the action palette once, before button renders.
+const ACTION_VARIANTS = {
 	primary: {
 		default: 'bg-primary-9 text-white hover:bg-primary-10 focus-visible:ring-primary-9',
 		outline: 'border border-primary-6 bg-transparent text-primary-10 hover:bg-primary-2 focus-visible:ring-primary-9',
 		ghost: 'border border-transparent bg-transparent text-primary-10 hover:bg-primary-2 focus-visible:ring-primary-9',
 		tonal: 'border border-primary-3 bg-primary-2 text-primary-12 hover:bg-primary-3 focus-visible:ring-primary-9',
-		link: 'min-h-0 border-0 bg-transparent px-0 py-0 text-primary-9 underline-offset-4 hover:underline focus-visible:ring-primary-9',
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-primary-9 underline focus-visible:ring-primary-9',
 	},
 	secondary: {
@@ -45,7 +46,6 @@ export const ACTION_VARIANTS = {
 		outline: 'border border-blue-300 bg-transparent text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-600',
 		ghost: 'border border-transparent bg-transparent text-blue-700 hover:bg-blue-50 focus-visible:ring-blue-600',
 		tonal: 'border border-blue-100 bg-blue-50 text-blue-800 hover:bg-blue-100 focus-visible:ring-blue-600',
-		link: 'min-h-0 border-0 bg-transparent px-0 py-0 text-blue-700 underline-offset-4 hover:underline focus-visible:ring-blue-600',
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-blue-700 underline focus-visible:ring-blue-600',
 	},
 	gray: {
@@ -53,7 +53,6 @@ export const ACTION_VARIANTS = {
 		outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-700',
 		ghost: 'border border-transparent bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-700',
 		tonal: 'border border-gray-200 bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-700',
-		link: 'min-h-0 border-0 bg-transparent px-0 py-0 text-gray-700 underline-offset-4 hover:underline focus-visible:ring-gray-700',
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-gray-700 underline focus-visible:ring-gray-700',
 	},
 	destructive: {
@@ -61,11 +60,11 @@ export const ACTION_VARIANTS = {
 		outline: 'border border-rose-300 bg-transparent text-rose-700 hover:bg-rose-50 focus-visible:ring-rose-600',
 		ghost: 'border border-transparent bg-transparent text-rose-700 hover:bg-rose-50 focus-visible:ring-rose-600',
 		tonal: 'border border-rose-100 bg-rose-50 text-rose-800 hover:bg-rose-100 focus-visible:ring-rose-600',
-		link: 'min-h-0 border-0 bg-transparent px-0 py-0 text-rose-700 underline-offset-4 hover:underline focus-visible:ring-rose-600',
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-rose-700 underline focus-visible:ring-rose-600',
 	},
 } satisfies Record<UiColor, Record<ActionTreatment, string>>;
-export const CONTROL_VARIANTS = {
+// terra-quality-ignore single-use -- Initialize the control palette once for all input renders.
+const CONTROL_VARIANTS = {
 	primary: {
 		default: 'border-primary-6 bg-white text-primary-12 placeholder:text-primary-11/50 focus-visible:ring-primary-11',
 		outline: 'border-primary-5 bg-transparent text-primary-10 placeholder:text-primary-8 focus-visible:ring-primary-9',
@@ -91,7 +90,8 @@ export const CONTROL_VARIANTS = {
 		tonal: 'border-rose-100 bg-rose-50 text-rose-900 placeholder:text-rose-600 focus-visible:ring-rose-600',
 	},
 } satisfies Record<UiColor, Record<ControlTreatment, string>>;
-export const SURFACE_VARIANTS = {
+// terra-quality-ignore single-use -- Initialize the surface palette once for all container renders.
+const SURFACE_VARIANTS = {
 	primary: {
 		default: 'border-primary-5 bg-white text-primary-12',
 		outline: 'border-primary-5 bg-transparent text-primary-12',
@@ -136,20 +136,23 @@ const FIELD_SIZES: Record<UiSize, string> = {
 	xl: 'h-12 px-4 text-lg',
 };
 const FIELD_BASE = 'block w-full rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50';
+// terra-quality-ignore single-use -- Keep the selected palette shared across toggle renders.
 const SELECTED_TOGGLE: Record<UiColor, string> = {
 	primary: 'border-primary-9 bg-primary-2 ring-1 ring-primary-9',
 	secondary: 'border-blue-600 bg-blue-50 ring-1 ring-blue-600',
 	gray: 'border-gray-700 bg-gray-100 ring-1 ring-gray-700',
 	destructive: 'border-rose-600 bg-rose-50 ring-1 ring-rose-600',
 };
+
 /** Renders a button using the shared triage control variants. */
-export const Button = React.forwardRef<
-	HTMLButtonElement,
-	React.ButtonHTMLAttributes<HTMLButtonElement> & {
+export const Button = React.forwardRef(function (
+	attributes: React.ButtonHTMLAttributes<HTMLButtonElement> & {
 		variant?: ActionVariant;
 		size?: UiSize;
-	}
->(({ className, variant = 'primary', size = 'md', type = 'button', ...props }, ref) => {
+	},
+	ref: React.ForwardedRef<HTMLButtonElement>,
+): React.JSX.Element {
+	const { className, variant = 'primary', size = 'md', type = 'button', ...attrs } = attributes;
 	return (
 		<button
 			ref={ref}
@@ -160,25 +163,26 @@ export const Button = React.forwardRef<
 				ACTION_SIZES[size],
 				className,
 			)}
-			{...props}
+			{...attrs}
 		/>
 	);
 });
 /** Renders a stateful button using the shared control variants. */
-export const ToggleButton = React.forwardRef<
-	HTMLButtonElement,
-	React.ButtonHTMLAttributes<HTMLButtonElement> & {
+export const ToggleButton = React.forwardRef(function (
+	attributes: React.ButtonHTMLAttributes<HTMLButtonElement> & {
 		variant?: ControlVariant;
 		size?: UiSize;
-	}
->(({ className, variant = 'primary-outline', size = 'md', type = 'button', ...props }, ref) => {
+	},
+	ref: React.ForwardedRef<HTMLButtonElement>,
+): React.JSX.Element {
+	const { className, variant = 'primary-outline', size = 'md', type = 'button', ...attrs } = attributes;
 	return (
 		<button
 			ref={ref}
 			type={type}
 			className={classes(
 				'inline-flex items-center justify-center rounded-lg border text-left font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-60',
-				props['aria-pressed'] === true ? selectedToggleClass(variant) : controlClass(variant),
+				attrs['aria-pressed'] === true ? SELECTED_TOGGLE[variant.split('-')[0] as UiColor] : controlClass(variant),
 				{
 					xs: 'min-h-8 px-2 py-1 text-xs',
 					sm: 'min-h-9 px-2.5 py-1.5 text-sm',
@@ -188,55 +192,60 @@ export const ToggleButton = React.forwardRef<
 				}[size],
 				className,
 			)}
-			{...props}
+			{...attrs}
 		/>
 	);
 });
-/** Renders a styled text input for either demo form. */
-export const Input = React.forwardRef<
-	HTMLInputElement,
-	/** Input attributes plus shared control variant and size options. */ Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & {
+/** Renders a styled text input with shared palette and size variants. */
+export const Input = React.forwardRef(function (
+	attributes: Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & {
 		variant?: ControlVariant;
 		size?: UiSize;
-	}
->(({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-	return <input ref={ref} className={classes(FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...props} />;
+	},
+	ref: React.ForwardedRef<HTMLInputElement>,
+): React.JSX.Element {
+	const { className, variant = 'primary', size = 'md', ...attrs } = attributes;
+	return <input ref={ref} className={classes(FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...attrs} />;
 });
-/** Renders a styled select for either demo form. */
-export const Select = React.forwardRef<
-	HTMLSelectElement,
-	/** Select attributes plus shared control variant and size options. */ Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> & {
+/** Renders a styled select with shared palette and size variants. */
+export const Select = React.forwardRef(function (
+	attributes: Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> & {
 		variant?: ControlVariant;
 		size?: UiSize;
-	}
->(({ className, variant = 'primary', size = 'md', ...props }, ref) => {
-	return <select ref={ref} className={classes(FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...props} />;
+	},
+	ref: React.ForwardedRef<HTMLSelectElement>,
+): React.JSX.Element {
+	const { className, variant = 'primary', size = 'md', ...attrs } = attributes;
+	return <select ref={ref} className={classes(FIELD_BASE, controlClass(variant), FIELD_SIZES[size], className)} {...attrs} />;
 });
-/** Renders the shared handover notes field. */
-export const Textarea = React.forwardRef<
-	HTMLTextAreaElement,
-	/** Textarea attributes plus shared control variant and size options. */ React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+/** Renders a handover notes field with shared palette and size variants. */
+export const Textarea = React.forwardRef(function (
+	attributes: React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
 		variant?: ControlVariant;
 		size?: UiSize;
-	}
->(({ className, variant = 'primary', size = 'md', ...props }, ref) => (
-	<textarea
-		ref={ref}
-		className={classes(
-			'min-h-24 w-full resize-y rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50',
-			controlClass(variant),
-			{
-				xs: 'px-2 py-1.5 text-xs',
-				sm: 'px-2.5 py-2 text-sm',
-				md: 'px-3 py-2 text-sm',
-				lg: 'px-4 py-3 text-base',
-				xl: 'px-4 py-3 text-lg',
-			}[size],
-			className,
-		)}
-		{...props}
-	/>
-));
+	},
+	ref: React.ForwardedRef<HTMLTextAreaElement>,
+): React.JSX.Element {
+	const { className, variant = 'primary', size = 'md', ...attrs } = attributes;
+	return (
+		<textarea
+			ref={ref}
+			className={classes(
+				'min-h-24 w-full resize-y rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50',
+				controlClass(variant),
+				{
+					xs: 'px-2 py-1.5 text-xs',
+					sm: 'px-2.5 py-2 text-sm',
+					md: 'px-3 py-2 text-sm',
+					lg: 'px-4 py-3 text-base',
+					xl: 'px-4 py-3 text-lg',
+				}[size],
+				className,
+			)}
+			{...attrs}
+		/>
+	);
+});
 
 /*//////////////////////////////////////////////////
 HELPERS
@@ -256,20 +265,26 @@ function classes(...values: Array<string | false | undefined>): string {
 /**
  * Renders a semantic container using the shared surface variants.
  *
- * @param props - Element attributes, selected surface variant, and optional class names.
+ * @param asElement - Semantic element used to render the surface.
+ * @param variant - Surface palette and treatment.
+ * @param className - Additional class names applied to the surface.
+ * @param attrs - Remaining HTML attributes forwarded to the surface element.
  *
  * @return The semantic container element with its variant styles applied.
  */
 export function Surface({
-	as: Element = 'div',
+	as: asElement = 'div',
 	variant = 'primary',
 	className,
-	...props
-}: /** HTML attributes and variant options accepted by the Surface component. */ React.HTMLAttributes<HTMLElement> & {
+	...attrs
+}: React.HTMLAttributes<HTMLElement> & {
 	as?: 'div' | 'section' | 'article' | 'header' | 'span';
 	variant?: SurfaceVariant;
 }): React.JSX.Element {
-	return <Element className={classes(surfaceClass(variant), className)} {...props} />;
+	// terra-quality-ignore single-use -- JSX needs a capitalized binding for the chosen semantic element.
+	const Element = asElement;
+	const [color, treatment = 'default'] = variant.split('-') as [UiColor, SurfaceTreatment?];
+	return <Element className={classes(SURFACE_VARIANTS[color][treatment], className)} {...attrs} />;
 }
 
 /**
@@ -285,18 +300,6 @@ export function actionClass(variant: ActionVariant): string {
 }
 
 /**
- * Resolves the class names for a surface variant.
- *
- * @param variant - Palette and treatment combination to resolve.
- *
- * @return CSS classes assigned to the requested surface variant.
- */
-function surfaceClass(variant: SurfaceVariant): string {
-	const [color, treatment = 'default'] = variant.split('-') as [UiColor, SurfaceTreatment?];
-	return SURFACE_VARIANTS[color][treatment];
-}
-
-/**
  * Resolves the class names for a form control variant.
  *
  * @param variant - Palette and treatment combination to resolve.
@@ -308,17 +311,6 @@ function controlClass(variant: ControlVariant): string {
 	return CONTROL_VARIANTS[color][treatment];
 }
 
-/**
- * Resolves the selected-state class names for a toggle palette.
- *
- * @param variant - Control palette and treatment for the toggle.
- *
- * @return CSS classes applied while the toggle is selected.
- */
-function selectedToggleClass(variant: ControlVariant): string {
-	const [color] = variant.split('-') as [UiColor];
-	return SELECTED_TOGGLE[color];
-}
 Button.displayName = 'Button';
 ToggleButton.displayName = 'ToggleButton';
 Input.displayName = 'Input';

@@ -1,0 +1,11 @@
+[build]
+command = "pnpm run build"
+publish = "dist/site"
+
+[build.environment]
+NODE_VERSION = "22.19.0"
+
+[[headers]]
+for = "/*"
+[headers.values]
+X-Robots-Tag = "noindex, nofollow"

@@ -11,26 +11,28 @@ const { title = 'GP Triage Demo' } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang='en'>
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content="A standalone triage simulation for GP assessment, nurse intake, and ambulance dispatch workflows." />
+		<meta charset='UTF-8' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+		<meta name='description' content='A standalone triage simulation for GP assessment, nurse intake, and ambulance dispatch workflows.' />
 		<title>{title}</title>
 	</head>
 	<body>
-		<Surface as="header" className="border-b px-4 py-3 shadow-sm">
-			<nav class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3" aria-label="Demo sections">
-				<ActionLink href="/" size="md">GP Triage</ActionLink>
-				<div class="flex flex-wrap gap-2">
-					<ActionLink href="/">GP assessment</ActionLink>
-					<ActionLink href="/wireframes">Triage workflow</ActionLink>
-					<ActionLink href="/nurse">Nurse intake</ActionLink>
-					<ActionLink href="/ambulance">Ambulance dispatch</ActionLink>
+		<Surface as='header' className='border-b px-4 py-3 shadow-sm'>
+			<nav class='mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3' aria-label='Demo sections'>
+				<ActionLink href='/' size='md'>
+					GP Triage
+				</ActionLink>
+				<div class='flex flex-wrap gap-2'>
+					<ActionLink href='/'>GP assessment</ActionLink>
+					<ActionLink href='/wireframes'>Triage workflow</ActionLink>
+					<ActionLink href='/nurse'>Nurse intake</ActionLink>
+					<ActionLink href='/ambulance'>Ambulance dispatch</ActionLink>
 				</div>
 			</nav>
 		</Surface>
-		<main class="min-h-screen px-4 py-8 sm:px-6">
+		<main class='min-h-screen px-4 py-8 sm:px-6'>
 			<slot />
 		</main>
 	</body>

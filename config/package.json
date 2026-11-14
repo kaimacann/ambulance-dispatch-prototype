@@ -8,16 +8,14 @@
 		"node": ">=22.19.0"
 	},
 	"scripts": {
-		"dev": "cd .. && pnpm exec astro dev --config astro.config.mjs",
-		"build": "cd .. && pnpm exec astro build --config astro.config.mjs",
+		"quality:fix-boundaries": "node scripts/quality.mjs error-boundaries --all",
+		"dev": "cd .. && mkdir -p dist/cache/astro-types && pnpm exec astro dev --config config/astro.config.mjs",
+		"build": "cd .. && mkdir -p dist/cache/astro-types && pnpm exec astro build --config config/astro.config.mjs",
 		"check": "cd .. && pnpm run check",
-		"quality": "node scripts/quality.mjs error-boundaries --all && node scripts/quality.mjs quality",
-		"quality:all": "node scripts/quality.mjs error-boundaries --all && node scripts/quality.mjs quality --all",
-		"format:check": "cd .. && prettier --check . --config config/.prettierrc.mjs --ignore-path .gitignore --ignore-path config/.prettierignore",
-		"lint": "cd .. && eslint . --config config/eslint.config.mjs",
-		"knip": "cd .. && knip --config config/knip.json"
+		"quality": "node \"$(git rev-parse --show-toplevel)/scripts/quality-runner.mjs\" quality",
+		"quality:all": "node \"$(git rev-parse --show-toplevel)/scripts/quality-runner.mjs\" quality --all",
+		"test": "cd .. && node --test tests/*.test.mjs"
 	},
-	"dependencies": {},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@typescript-eslint/eslint-plugin": "^8.71.0",
@@ -28,7 +26,6 @@
 		"globals": "^17.13.0",
 		"knip": "^6.39.0",
 		"postcss": "^8.5.26",
-		"prettier": "^3.9.9",
 		"tailwindcss": "^3.4.19"
 	}
 }

@@ -1,12 +1,12 @@
 {
-	"ignoreExportsUsedInFile": true,
 	"workspaces": {
 		".": {
 			"astro": {
-				"config": "astro.config.mjs",
+				"config": "config/astro.config.mjs",
 				"entry": "src/pages/**/*.astro"
 			},
-			"project": ["src/**/*.{astro,js,jsx,ts,tsx}"]
+			"entry": ["src/pages/**/*.astro", "scripts/quality-runner.mjs", "scripts/astro-check.mjs"],
+			"project": ["src/**/*.{astro,js,jsx,ts,tsx}", "scripts/*.mjs"]
 		},
 		"config": {
 			"project": ["*.{js,mjs,cjs,ts}", "scripts/*.mjs", "../src/**/*.css"]

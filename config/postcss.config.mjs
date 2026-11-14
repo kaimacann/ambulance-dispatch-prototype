@@ -1,8 +1,11 @@
-import { fileURLToPath } from 'node:url';
+/**
+ * config/postcss.config.mjs
+ */
 
-export default {
-	plugins: {
-		tailwindcss: { config: fileURLToPath(new URL('./tailwind.config.mjs', import.meta.url)) },
-		autoprefixer: {},
-	},
-};
+/*//////////////////////////////////////////////////
+IMPORTS
+//////////////////////////////////////////////////*/
+
+// API
+import { fileURLToPath } from 'node:url';
+export default { plugins: { tailwindcss: { config: fileURLToPath(new URL('./tailwind.config.mjs', import.meta.url)) }, autoprefixer: {} } };

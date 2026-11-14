@@ -15,7 +15,7 @@ Open the local URL printed by Astro. The home page links to the workflow views.
 
 ### Commands
 
-From the repository root, run `pnpm check` and `pnpm build`.
+From the repository root, run `pnpm quality:all` and `pnpm build`.
 
 ## Security and Limitations
 

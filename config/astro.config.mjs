@@ -1,0 +1,21 @@
+/**
+ * astro.config.mjs
+ */
+
+/*//////////////////////////////////////////////////
+IMPORTS
+//////////////////////////////////////////////////*/
+
+// API
+import react from '@astrojs/react';
+import { defineConfig } from 'astro/config';
+import { fileURLToPath } from 'node:url';
+import { terraErrorBoundaryIntegration as __terraErrorBoundaryIntegration } from '@terra-symposium/standards-quality/astro-integration';
+export default defineConfig({
+	outDir: fileURLToPath(new URL('../dist/site/', import.meta.url)),
+	cacheDir: fileURLToPath(new URL('../dist/cache/astro/', import.meta.url)),
+	server: { port: 3000, strictPort: true },
+	output: 'static',
+	integrations: [__terraErrorBoundaryIntegration(), react()],
+	vite: { cacheDir: fileURLToPath(new URL('../dist/cache/vite/', import.meta.url)), css: { postcss: fileURLToPath(new URL('./', import.meta.url)) } },
+});

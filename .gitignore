@@ -13,3 +13,9 @@ dist/
 
 # Error logs
 error.log
+
+# Generated test output
+**/tests/results/
+
+# Local generated caches and dependency links
+.astro
