@@ -17,8 +17,7 @@ From the repository root, run `pnpm quality:all` and `pnpm build`.
 
 ## Configuration
 
-This prototype is not a clinical decision tool, patient record, or dispatch service. Use synthetic
-data only; do not enter real patient information or rely on it for care.
+This prototype is not a clinical decision tool, patient record, or dispatch service. Use synthetic data only; do not enter real patient information or rely on it for care.
 
 ## Validation
 
@@ -29,19 +28,15 @@ data only; do not enter real patient information or rely on it for care.
 | `pnpm run test`        | Project test suite            |
 | `pnpm run build`       | Build output                  |
 
-Quality can apply safe fixes; review the diff before committing. No separate browser or Playwright
-test command is defined here.
+Quality can apply safe fixes; review the diff before committing. No separate browser or Playwright test command is defined here.
 
 ## Contributing
 
-`src/pages/` defines the home, ambulance, nurse, and wireframe routes. `src/components/` contains
-reusable workflow UI; Astro configuration is in `config/`.
+`src/pages/` defines the home, ambulance, nurse, and wireframe routes. `src/components/` contains reusable workflow UI; Astro configuration is in `config/`.
 
 Keep changes within the prototype scope.
 
-Open a pull request against `development` and review the results of
-[`repository-check.yml`](.github/workflows/repository-check.yml) before merging. Keep unrelated
-changes out of the pull request.
+Open a pull request against `development` and review the results of [`repository-check.yml`](.github/workflows/repository-check.yml) before merging. Keep unrelated changes out of the pull request.
 
 ## Documentation
 
