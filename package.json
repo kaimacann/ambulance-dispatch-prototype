@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@astrojs/check": "^0.9.12",
 		"@changesets/cli": "3.0.3",
-		"@terra-symposium/quality": "^2.4.0",
+		"@terra-symposium/quality": "^2.4.3",
 		"@types/react": "^19.2.18",
 		"astro": "^7.4.7",
 		"husky": "9.1.7",

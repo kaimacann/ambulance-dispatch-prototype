@@ -75,7 +75,7 @@
 	"tools": {
 		"prettier": "prettier",
 		"eslint": "config/node_modules/.bin/eslint",
-		"knip": "knip",
+		"knip": "config/node_modules/.bin/knip",
 		"tsc": "tsc"
 	},
 	"root": ".",

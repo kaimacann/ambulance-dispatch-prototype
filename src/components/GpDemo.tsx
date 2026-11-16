@@ -57,7 +57,7 @@ export default function GpDemo(): React.JSX.Element | null {
 		// terra-quality-ignore single-use -- Capture the event field before React runs the state updater.
 		const key = e.currentTarget.name as keyof PatientDetails;
 		const value = e.currentTarget.value;
-		setFormData(previous => ({ ...previous, [key]: value }));
+		setFormData(prev => ({ ...prev, [key]: value }));
 	}
 	/** Renders one catalog symptom as a pressed-state toggle.
 	 * @param s - Symptom definition providing the GP label and stable id.
