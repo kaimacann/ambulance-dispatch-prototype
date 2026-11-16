@@ -2,7 +2,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { runQualityFromCfg as installedRunQualityFromCfg } from '@terra-symposium/quality/cli';
+import { runQualityFromCfg as installedRunQualityFromCfg } from '@terra-symposium/hygiene/cli';
 import { format } from 'prettier';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -63,7 +63,7 @@ const configPath = join(tempDir, 'quality.json');
 writeFileSync(configPath, await format(JSON.stringify(raw), { parser: 'json' }));
 try {
 	if (args[0] === 'quality' && !args.includes('--warn') && !args.includes('--fix') && !args.includes('--safe-fix')) args.push('--fix');
-	// terra-quality-ignore single-use -- Resolve the optional async runner before invoking it so import errors stay inside cleanup.
+	// hygiene-ignore single-use -- Resolve the optional async runner before invoking it so import errors stay inside cleanup.
 	const runQualityFromCfg = process.env.STANDARDS_QUALITY_RUNNER ? (await import(pathToFileURL(process.env.STANDARDS_QUALITY_RUNNER).href)).runQualityFromCfg : installedRunQualityFromCfg;
 	await runQualityFromCfg(configPath, args);
 } finally {

@@ -10,7 +10,7 @@ IMPORTS
 import react from '@astrojs/react';
 import { defineConfig } from 'astro/config';
 import { fileURLToPath } from 'node:url';
-import { terraErrorBoundaryIntegration as __terraErrorBoundaryIntegration } from '@terra-symposium/quality/astro-integration';
+import { terraErrorBoundaryIntegration as __terraErrorBoundaryIntegration } from '@terra-symposium/hygiene/astro-integration';
 export default defineConfig({
 	outDir: fileURLToPath(new URL('../dist/site/', import.meta.url)),
 	cacheDir: fileURLToPath(new URL('../dist/cache/astro/', import.meta.url)),

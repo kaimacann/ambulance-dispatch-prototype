@@ -54,7 +54,7 @@ export default function GpDemo(): React.JSX.Element | null {
 	 * @param e - Form control event whose name and value identify the field update.
 	 */
 	function handleFormFieldChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void {
-		// terra-quality-ignore single-use -- Capture the event field before React runs the state updater.
+		// hygiene-ignore single-use -- Capture the event field before React runs the state updater.
 		const key = e.currentTarget.name as keyof PatientDetails;
 		const value = e.currentTarget.value;
 		setFormData(prev => ({ ...prev, [key]: value }));

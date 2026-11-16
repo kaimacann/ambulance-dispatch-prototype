@@ -172,7 +172,7 @@ export default function TriageWorkflow({ mode }: { mode: 'nurse' | 'ambulance' }
 	 * @param e - Input or select event naming the field and its new value.
 	 */
 	function handleIntakeFieldChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void {
-		// terra-quality-ignore single-use -- Capture the event field before React runs the state updater.
+		// hygiene-ignore single-use -- Capture the event field before React runs the state updater.
 		const key = e.currentTarget.name as keyof PatientDetails;
 		const value = e.currentTarget.value;
 		setIntake(current => ({ ...current, [key]: value }));
@@ -387,7 +387,7 @@ export default function TriageWorkflow({ mode }: { mode: 'nurse' | 'ambulance' }
 	);
 }
 
-// terra-quality-ignore single-use -- Keep a named gauge component in React's render tree and error stack.
+// hygiene-ignore single-use -- Keep a named gauge component in React's render tree and error stack.
 /**
  * Shows the assessment score marker along a low-to-high severity scale.
  *
@@ -410,7 +410,7 @@ function ScoreGauge({ score }: { score: number }): React.JSX.Element {
 	);
 }
 
-// terra-quality-ignore single-use -- Keep dispatch details as a named React component boundary.
+// hygiene-ignore single-use -- Keep dispatch details as a named React component boundary.
 /**
  * Displays the selected request's priority, recommendation, and dispatch action.
  *

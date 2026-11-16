@@ -23,7 +23,7 @@ export type UiSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ActionVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'saturated'>}`;
 /** Variants available to form and toggle controls. */
 type ControlVariant = UiColor | `${UiColor}-${Extract<UiType, 'outline' | 'ghost' | 'tonal'>}`;
-// terra-quality-ignore single-use -- Exported variant type is part of the shared controls API.
+// hygiene-ignore single-use -- Exported variant type is part of the shared controls API.
 /** Variants available to semantic surface containers. */
 export type SurfaceVariant = UiColor | `${UiColor}-${Exclude<UiType, 'default' | 'underline'>}`;
 /** Treatments usable by action buttons. */
@@ -32,7 +32,7 @@ type ActionTreatment = Exclude<UiType, 'saturated'>;
 type ControlTreatment = Extract<UiType, 'default' | 'outline' | 'ghost' | 'tonal'>;
 /** Treatments usable by surface containers. */
 type SurfaceTreatment = Exclude<UiType, 'underline'>;
-// terra-quality-ignore single-use -- Initialize the action palette once, before button renders.
+// hygiene-ignore single-use -- Initialize the action palette once, before button renders.
 const ACTION_VARIANTS = {
 	primary: {
 		default: 'bg-primary-9 text-white hover:bg-primary-10 focus-visible:ring-primary-9',
@@ -63,7 +63,7 @@ const ACTION_VARIANTS = {
 		underline: 'min-h-0 border-0 bg-transparent px-0 py-0 text-rose-700 underline focus-visible:ring-rose-600',
 	},
 } satisfies Record<UiColor, Record<ActionTreatment, string>>;
-// terra-quality-ignore single-use -- Initialize the control palette once for all input renders.
+// hygiene-ignore single-use -- Initialize the control palette once for all input renders.
 const CONTROL_VARIANTS = {
 	primary: {
 		default: 'border-primary-6 bg-white text-primary-12 placeholder:text-primary-11/50 focus-visible:ring-primary-11',
@@ -90,7 +90,7 @@ const CONTROL_VARIANTS = {
 		tonal: 'border-rose-100 bg-rose-50 text-rose-900 placeholder:text-rose-600 focus-visible:ring-rose-600',
 	},
 } satisfies Record<UiColor, Record<ControlTreatment, string>>;
-// terra-quality-ignore single-use -- Initialize the surface palette once for all container renders.
+// hygiene-ignore single-use -- Initialize the surface palette once for all container renders.
 const SURFACE_VARIANTS = {
 	primary: {
 		default: 'border-primary-5 bg-white text-primary-12',
@@ -136,7 +136,7 @@ const FIELD_SIZES: Record<UiSize, string> = {
 	xl: 'h-12 px-4 text-lg',
 };
 const FIELD_BASE = 'block w-full rounded-md border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50';
-// terra-quality-ignore single-use -- Keep the selected palette shared across toggle renders.
+// hygiene-ignore single-use -- Keep the selected palette shared across toggle renders.
 const SELECTED_TOGGLE: Record<UiColor, string> = {
 	primary: 'border-primary-9 bg-primary-2 ring-1 ring-primary-9',
 	secondary: 'border-blue-600 bg-blue-50 ring-1 ring-blue-600',
@@ -281,7 +281,7 @@ export function Surface({
 	as?: 'div' | 'section' | 'article' | 'header' | 'span';
 	variant?: SurfaceVariant;
 }): React.JSX.Element {
-	// terra-quality-ignore single-use -- JSX needs a capitalized binding for the chosen semantic element.
+	// hygiene-ignore single-use -- JSX needs a capitalized binding for the chosen semantic element.
 	const Element = asElement;
 	const [color, treatment = 'default'] = variant.split('-') as [UiColor, SurfaceTreatment?];
 	return <Element className={classes(SURFACE_VARIANTS[color][treatment], className)} {...attrs} />;
